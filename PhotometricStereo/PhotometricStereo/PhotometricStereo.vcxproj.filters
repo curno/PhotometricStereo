@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{003babef-4ea2-420a-bddd-60dfbbd56158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model">
+      <UniqueIdentifier>{4da256be-deeb-4547-beab-34b04cb2d5ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{5523d7f3-e701-439a-b7f8-f1c3d9d4ff5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{be4373b9-7a8c-4ac9-9cdd-e7335a738a29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{2d1b7d76-7ab8-4ddd-896e-440ea3419e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{cc25d50c-050f-4f90-9f64-5ae6735b68f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\QtFiles">
+      <UniqueIdentifier>{f1243d7b-898d-4850-9f45-dff805c83616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{542adef5-ee16-4398-bb58-c9c9c000e1b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\QtFiles">
+      <UniqueIdentifier>{6a16a0ac-ef36-4f7f-8f99-552c01cd7f33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Cuda">
+      <UniqueIdentifier>{f0afaf73-68c2-4eef-aa96-8a35a1a4135a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread">
+      <UniqueIdentifier>{e379638f-e1bc-432e-8486-1efadc8878d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files\Deploy">
+      <UniqueIdentifier>{3d0be4d7-5e5d-4b4a-9e66-3a068d0d269c}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{842d2d31-6add-4534-9f1b-9b8972921fe0}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{76125bd3-31e2-4c00-ab45-69ede416764d}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Memory Leak Debug">
+      <UniqueIdentifier>{2301646b-5ff7-4abe-a5d8-af55c8d7ee42}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Header Files\Thread">
+      <UniqueIdentifier>{ae9c01ac-9576-4362-96e3-8044efc74b09}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageView.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_Resource.cpp">
+      <Filter>Resources\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelInfo.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelInfoSet.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RelightningThread.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Deploy\moc_RelightningThread.cpp">
+      <Filter>Generated Files\Deploy</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RelightningThread.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Memory Leak Debug\moc_RelightningThread.cpp">
+      <Filter>Generated Files\Memory Leak Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DepthView.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ImageView.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MainWindow.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RelightningThread.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_VectorView.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Deploy\moc_ViewHistoryItemWidget.cpp">
+      <Filter>Generated Files\Deploy</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ViewHistoryItemWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Memory Leak Debug\moc_ViewHistoryItemWidget.cpp">
+      <Filter>Generated Files\Memory Leak Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Deploy\moc_PixelInfoSetView.cpp">
+      <Filter>Generated Files\Deploy</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PixelInfoSetView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Memory Leak Debug\moc_PixelInfoSetView.cpp">
+      <Filter>Generated Files\Memory Leak Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PixelInfoSetView.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ViewHistoryItemWidget.cpp">
+      <Filter>Source Files\QtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewHistoryItemWidget.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Deploy\moc_VectorView.cpp">
+      <Filter>Generated Files\Deploy</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_VectorView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_VectorView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Memory Leak Debug\moc_VectorView.cpp">
+      <Filter>Generated Files\Memory Leak Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelInfoSetViewDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Deploy\moc_PixelInfoSetViewDialog.cpp">
+      <Filter>Generated Files\Deploy</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PixelInfoSetViewDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PixelInfoSetViewDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Memory Leak Debug\moc_PixelInfoSetViewDialog.cpp">
+      <Filter>Generated Files\Memory Leak Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthView.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelInfoSetView.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RelightningView.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PSModel.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="PhotometricStereoMath.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindowUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CudaMethods.h">
+      <Filter>Header Files\Model\Cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelIndex.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelInfo.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageModel.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelInfoSet.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageDataCube.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelConfiguration.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelProgress.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewHistoryWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RelightningView.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="DepthView.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ImageView.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MainWindow.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resource.qrc">
+      <Filter>Resources</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RelightningThread.h">
+      <Filter>Header Files\Thread</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ViewHistoryItemWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PixelInfoSetView.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="VectorView.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PixelInfoSetViewDialog.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icon.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="checkbox_checked.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="checkbox_unchecked.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="setting.png">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="CudaMethods.cu">
+      <Filter>Header Files\Model\Cuda</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.txt" />
+  </ItemGroup>
+</Project>
