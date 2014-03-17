@@ -90,9 +90,9 @@ public:
         switch (method)
         {
         case ShadowUseMethod::Ignore_Shadow:
-            return "Ignore";
+            return "Ignore Shadow Pixel";
         case ShadowUseMethod::Remove_Shadow:
-            return "Remove";
+            return "Remove Shadow";
         default:
             return "";
         }

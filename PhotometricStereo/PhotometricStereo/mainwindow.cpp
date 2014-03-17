@@ -222,19 +222,46 @@ void MainWindow::On_pushButtonPlotTargetCircle__clicked(bool checked)
 {
     if (checked)
     {
-        ui.imageView->SetCurrentState(ImageView::PlotTargetCircleState::Instance());
+        switch (ui.comboBoxTargetObject->currentIndex())
+        {
+        case 0: //sphere
+            ui.imageView->SetCurrentState(ImageView::PlotTargetCircleState::Instance());
+            break;
+        case 1: // cylinder
+            ui.imageView->SetCurrentState(ImageView::PlotTargetCylinderState::Instance());
+            break;
+        case 2:// cone
+            ui.imageView->SetCurrentState(ImageView::PlotTargetConeState::Instance());
+            break;
+        default:
+            break;
+        }
     }
     else
     {
         ui.imageView->SetCurrentState(ImageView::NoneState::Instance());
         if (Model != nullptr)
         {
-            Model->SetTargetCircle(ui.imageView->GetPlotTargetCircle());
-            Model->LoadTargetBallPixels();
+            Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
+            
+            if (ui.comboBoxTargetObject->currentIndex() == 0) // sphere
+                Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
+            else if (ui.comboBoxTargetObject->currentIndex() == 1) // cylinder
+            {
+                QRect r = ui.imageView->GetPlotTargetCylinder();
+                Model->LoadTargetCylinderPixels(r.x(), r.y(), r.width(), r.height());
+            }
+            else if (ui.comboBoxTargetObject->currentIndex() == 2) //cone
+            {
+                QRect r = ui.imageView->GetPlotTargetCone();
+                Model->LoadTargetConePixels(r.bottom(), r.top(), r.left(), r.right());
+            }
+
             double error = Model->ComputeAverageError();
-            QMessageBox::information(this, "Error", QString("The average error angle is %0 бу").arg(QString::number(error * 180.0 / PI, 'g', 6)));
+            QMessageBox::information(this, "Error", QString("The average error angle is %0 degree.").arg(QString::number(error * 180.0 / PI, 'g', 6)));
+            ui.imageView->update();
         }
-        ui.imageView->update();
+        
     }
 }
 void MainWindow::On_pushButtonLoadDepthView_clicked()

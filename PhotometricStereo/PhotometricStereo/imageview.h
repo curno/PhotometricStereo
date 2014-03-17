@@ -277,6 +277,109 @@ public:
             return &Instance_;
         }
     };
+
+
+    class PlotTargetCylinderState : public State
+    {
+    public:
+        virtual void paintEvent(ImageView *owner) override
+        {
+            QPainter painter(owner);
+            painter.setPen(QPen(QBrush(Qt::darkYellow), 2.5));
+            
+            painter.drawRect(owner->PlotTargetCylinder);
+
+            painter.setPen(QPen(QBrush(Qt::red), 2.5));
+            painter.drawEllipse(QPoint(owner->Model->Configuration.ObjectLoadingCircle.X, owner->Model->Configuration.ObjectLoadingCircle.Y), (int)owner->Model->Configuration.ObjectLoadingCircle.Z, owner->Model->Configuration.ObjectLoadingCircle.Z);
+        }
+        virtual void mousePressEvent(ImageView *owner, QMouseEvent *e) override
+        {
+            if (e->buttons() == Qt::LeftButton)
+            {
+                owner->PlotTargetCylinder.setTopLeft(e->pos());
+            }
+            else if (e->buttons() == Qt::RightButton)
+            {
+                owner->PlotTargetCylinder.setBottomRight(e->pos());
+            }
+            owner->update();
+        }
+        virtual void mouseMoveEvent(ImageView *owner, QMouseEvent *e) override
+        {
+            if (e->buttons() == Qt::LeftButton)
+            {
+                owner->PlotTargetCylinder.setTopLeft(e->pos());
+            }
+            else if (e->buttons() == Qt::RightButton)
+            {
+                owner->PlotTargetCylinder.setBottomRight(e->pos());
+            }
+            owner->update();
+        }
+        virtual void mouseReleaseEvent(ImageView *owner, QMouseEvent *event) override
+        {
+
+        }
+
+        static State *Instance()
+        {
+            static PlotTargetCylinderState Instance_;
+            return &Instance_;
+        }
+    };
+
+    class PlotTargetConeState : public State
+    {
+    public:
+        virtual void paintEvent(ImageView *owner) override
+        {
+            QPainter painter(owner);
+            painter.setPen(QPen(QBrush(Qt::darkYellow), 2.5));
+
+            painter.drawLine(owner->PlotTargetConeP0, owner->PlotTargetConeP1);
+            painter.drawLine(owner->PlotTargetConeP1, QPoint(2 * owner->PlotTargetConeP0.x() - owner->PlotTargetConeP1.x(), owner->PlotTargetConeP1.y()));
+            painter.drawLine(owner->PlotTargetConeP0, QPoint(2 * owner->PlotTargetConeP0.x() - owner->PlotTargetConeP1.x(), owner->PlotTargetConeP1.y()));
+
+            painter.setPen(QPen(QBrush(Qt::red), 2.5));
+            painter.drawEllipse(QPoint(owner->Model->Configuration.ObjectLoadingCircle.X, owner->Model->Configuration.ObjectLoadingCircle.Y), (int)owner->Model->Configuration.ObjectLoadingCircle.Z, owner->Model->Configuration.ObjectLoadingCircle.Z);
+        }
+        virtual void mousePressEvent(ImageView *owner, QMouseEvent *e) override
+        {
+            if (e->buttons() == Qt::LeftButton)
+            {
+                owner->PlotTargetConeP0 = e->pos();
+            }
+            else if (e->buttons() == Qt::RightButton)
+            {
+                owner->PlotTargetConeP1 = e->pos();
+            }
+            owner->update();
+        }
+        virtual void mouseMoveEvent(ImageView *owner, QMouseEvent *e) override
+        {
+            if (e->buttons() == Qt::LeftButton)
+            {
+                owner->PlotTargetConeP0 = e->pos();
+            }
+            else if (e->buttons() == Qt::RightButton)
+            {
+                owner->PlotTargetConeP1 = e->pos();
+            }
+            owner->update();
+        }
+        virtual void mouseReleaseEvent(ImageView *owner, QMouseEvent *event) override
+        {
+
+        }
+
+        static State *Instance()
+        {
+            static PlotTargetConeState Instance_;
+            return &Instance_;
+        }
+    };
+
+
     friend class State;
     friend class NoneState;
     friend class CheckNormalState;
@@ -318,6 +421,11 @@ private:
     QPoint PlotTargetCircleCenter;
     QPoint PlotTargetCircleRadius;
 
+    QRect PlotTargetCylinder;
+
+    QPoint PlotTargetConeP0;
+    QPoint PlotTargetConeP1;
+
     QPoint LocationToCheckShadow;
 public:
     CircleType GetPlotCircle() const
@@ -331,6 +439,17 @@ public:
         return CircleType(PlotTargetCircleCenter.x(), PlotTargetCircleCenter.y(), std::sqrt((PlotTargetCircleCenter.x() - PlotTargetCircleRadius.x()) * (PlotTargetCircleCenter.x() - PlotTargetCircleRadius.x()) + 
             (PlotTargetCircleCenter.y() - PlotTargetCircleRadius.y()) * (PlotTargetCircleCenter.y() - PlotTargetCircleRadius.y())));
     }
+
+    QRect GetPlotTargetCylinder() const
+    {
+        return PlotTargetCylinder;
+    }
+
+    QRect GetPlotTargetCone() const 
+    {
+        return QRect(PlotTargetConeP1.x(), PlotTargetConeP0.y(), 2 * (PlotTargetConeP0.x() - PlotTargetConeP1.x()), PlotTargetConeP1.y() - PlotTargetConeP0.y());
+    }
+
     QRect GetRelightingRect() const
     {
         int x = RelightingStart.x() < RelightingEnd.x() ? RelightingStart.x() : RelightingEnd.x();

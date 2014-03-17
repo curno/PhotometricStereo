@@ -22,8 +22,6 @@ public:
     ImageModel ImageData; // The image data and results in the PS process.
     ModelConfiguration Configuration; // The configuration record in the PS process.
 
-    CircleType TargetCircle;
-
     // Calculate the linear combination parameters of any three lights, with first three lights.
     typedef VectorPtr<double> LightsLinearCombinationsPtr;
     vector<LightsLinearCombinationsPtr> LightsLinearCombinations;
@@ -125,16 +123,15 @@ public:
         return ImageData.BallPixels[min_index];
     }
 
-    void SetTargetCircle(const CircleType &circle);
 public:
 
     double ComputeAverageError();
 
     void LoadBallPixels();
 
-    void LoadTargetBallPixels();
-    void LoadTargetCylinderPixels();
-    void LoadTargetConePixels();
+    void LoadTargetBallPixels(CircleType circle);
+    void LoadTargetCylinderPixels(int x, int y, int width, int height);
+    void LoadTargetConePixels(int bottom, int top, int left, int right);
 
 
     void LoadObjectPixelNormals();

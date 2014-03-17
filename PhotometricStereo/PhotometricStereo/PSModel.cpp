@@ -68,14 +68,66 @@ double PSModel::ComputeAverageError()
     return angle_sum;
 }
 
-void PSModel::LoadTargetCylinderPixels()
+void PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
 {
+    vector<PixelInfo> *pixels = new vector<PixelInfo>; 
 
+    int half_width = width / 2;
+    for (int w = 0; w <= half_width; ++w)
+    {
+        for (int h = 0; h <= height; ++h)
+        {
+            double z = std::sqrt(half_width * half_width - w * w);
+
+            PixelInfo p1;
+            p1.Index.X = x - w;
+            p1.Index.Y = h + y;
+            p1.Normal = uvec3(-w, 0, z);
+            p1.SetImageData(&ImageData);
+            pixels->push_back(p1);
+
+            PixelInfo p2;
+            p2.Index.X = x + w;
+            p2.Index.Y = h + y;
+            p2.Normal = uvec3(w, 0, z);
+            p2.SetImageData(&ImageData);
+            pixels->push_back(p2);
+        }
+    }
+    this->ImageData.TargetObjectPixels.SetData(pixels);
 }
 
-void PSModel::LoadTargetConePixels()
+void PSModel::LoadTargetConePixels(int bottom, int top, int left, int right)
 {
+    vector<PixelInfo> *pixels = new vector<PixelInfo>; 
 
+    int height = bottom - top;
+    double R = (right - left) / 2.0;
+    int center_x = left + right / 2;
+    int base_y = top;
+    for (int h = 0; h <= height; ++h)
+    {
+        double r = h * height / R;
+        for (int w = 0; w < r; ++w)
+        {
+            double z = std::sqrt(r * r - w * w);
+            PixelInfo p1;
+            p1.Index.X = (center_x - w);
+            p1.Index.Y = base_y + h;
+            p1.Normal = uvec3(-w * h, -z * z - w * w, z * h);
+            p1.SetImageData(&ImageData);
+            pixels->push_back(p1);
+
+            PixelInfo p2;
+            p2.Index.X = (center_x + w);
+            p2.Index.Y = base_y + h;
+            p2.Normal = uvec3(w * h, - z * z - w * w, z * h);
+            p2.SetImageData(&ImageData);
+            pixels->push_back(p2);
+        }
+    }
+
+    this->ImageData.TargetObjectPixels.SetData(pixels);
 }
 
 void PSModel::CreateShadowRemovedImagesPerPixel()
@@ -855,9 +907,9 @@ void PSModel::LoadObjectPixelNormals()
     Configuration.ElapsedMiliSeconds = time.elapsed();
 }
 
-void PSModel::LoadTargetBallPixels()
+void PSModel::LoadTargetBallPixels(CircleType circle)
 {
-    LoadBallPixelsInternal(TargetCircle, ImageData.TargetObjectPixels);
+    LoadBallPixelsInternal(circle, ImageData.TargetObjectPixels);
     // progress
     // TODO
 }
@@ -870,10 +922,6 @@ void PSModel::LoadBallPixels()
     // TODO
 }
 
-void PSModel::SetTargetCircle(const CircleType &circle)
-{
-    TargetCircle = circle;
-}
 
 PSModel * PSModel::CreateModel(const string &dir)
 {
