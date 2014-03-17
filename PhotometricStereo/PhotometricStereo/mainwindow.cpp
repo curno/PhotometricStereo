@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui.pushButtonPlotCircle, &QPushButton::clicked, this, &MainWindow::On_checkable_button_clicked);
     connect(ui.pushButtonShadowDifference, &QPushButton::clicked, this, &MainWindow::On_checkable_button_clicked);
     connect(ui.pushButtonCheckMatch, &QPushButton::clicked, this, &MainWindow::On_checkable_button_clicked);
+    connect(ui.pushButtonPlotTargetCircle, &QPushButton::clicked, this, &MainWindow::On_pushButtonPlotTargetCircle__clicked);
     
     ActionShowModelConfiguration_ = new QAction(this);
     ActionShowModelConfiguration_->setShortcut( Qt::Key_P);

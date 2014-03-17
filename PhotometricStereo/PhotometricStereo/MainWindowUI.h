@@ -49,7 +49,7 @@ public:
     QPushButton *pushButtonPS;
     QPushButton *pushButtonCheckMatch;
     QPushButton *pushButtonShadowDifference;
-    QPushButton *pushButtonPlotTargetCircle_;
+    QPushButton *pushButtonPlotTargetCircle;
     QPushButton *pushButtonSwitch;
     QPushButton *pushButtonSaveImageSet;
     QPushButton *pushButtonPrevious;
@@ -270,10 +270,10 @@ public:
 
         verticalLayout->addWidget(pushButtonShadowDifference);
 
-        pushButtonPlotTargetCircle_ = new QPushButton(dockWidgetContents_5);
-        pushButtonPlotTargetCircle_->setCheckable(true);
+        pushButtonPlotTargetCircle = new QPushButton(dockWidgetContents_5);
+        pushButtonPlotTargetCircle->setCheckable(true);
 
-        verticalLayout->addWidget(pushButtonPlotTargetCircle_);
+        verticalLayout->addWidget(pushButtonPlotTargetCircle);
 
         pushButtonSwitch = new QPushButton(dockWidgetContents_5);
 
@@ -337,10 +337,11 @@ public:
         LogicWidgets_.push_back(pushButtonPS);
         LogicWidgets_.push_back(pushButtonCheckMatch);
         LogicWidgets_.push_back(pushButtonShadowDifference);
-        LogicWidgets_.push_back(pushButtonPlotTargetCircle_);
+        LogicWidgets_.push_back(pushButtonPlotTargetCircle);
         LogicWidgets_.push_back(lineEditFolder);
         LogicWidgets_.push_back(lineEditSmoothNormal);
         LogicWidgets_.push_back(lineEditShadowThreshold);
+        LogicWidgets_.push_back(comboBoxShadowUse);
 
     } 
 
@@ -361,7 +362,7 @@ public:
         pushButtonPS->setText(QApplication::translate("MainWindowClass", "Reconstruct", 0));
         pushButtonCheckMatch->setText(QApplication::translate("MainWindowClass", "Match", 0));
         pushButtonShadowDifference->setText(QApplication::translate("MainWindowClass", "Shadow Difference", 0));
-        pushButtonPlotTargetCircle_->setText(QApplication::translate("MainWindowClass", "Plot Target Circle", 0));
+        pushButtonPlotTargetCircle->setText(QApplication::translate("MainWindowClass", "Plot Target Circle", 0));
         pushButtonSwitch->setText(QApplication::translate("MainWindowClass", "Switch Image Sets", 0));
         pushButtonSaveImageSet->setText(QApplication::translate("MainWindowClass", "Save Image Sets", 0));
         pushButtonPrevious->setText(QApplication::translate("MainWindowClass", "<<", 0));

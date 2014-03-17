@@ -181,24 +181,24 @@ public:
         int object_count = ImageData.ObjectPixels->size();
         int target_count = ImageData.TargetBallPixels->size();
         double angle_sum = 0;
-        for (int i = 0; i < object_count; i++)
+        for (int i = 0; i < target_count; i++)
         {
-            PixelInfo &object = ImageData.ObjectPixels[i];
+            PixelInfo &ball = ImageData.TargetBallPixels[i];
             bool found = false;
-            for (int j = 0; j < target_count; j++)
+            for (int j = 0; j < object_count; j++)
             {
-                PixelInfo &target = ImageData.TargetBallPixels[j];
-                if (object.Index == target.Index)
+                PixelInfo &object = ImageData.ObjectPixels[j];
+                if (object.Index == ball.Index)
                 {
                     found = true;
-                    angle_sum += std::acos(max(-1.0, min(1.0, object.Normal * target.Normal)));
+                    angle_sum += std::acos(max(-1.0, min(1.0, object.Normal * ball.Normal)));
                     break;
                 }
             }
             if (!found)
                 angle_sum += PI;
         }
-        angle_sum /= object_count;
+        angle_sum /= target_count;
         return angle_sum;
     }
 
