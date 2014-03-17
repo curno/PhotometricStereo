@@ -73,6 +73,7 @@ void PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
     vector<PixelInfo> *pixels = new vector<PixelInfo>; 
 
     int half_width = width / 2;
+    int x_base = x + half_width;
     for (int w = 0; w <= half_width; ++w)
     {
         for (int h = 0; h <= height; ++h)
@@ -80,14 +81,14 @@ void PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
             double z = std::sqrt(half_width * half_width - w * w);
 
             PixelInfo p1;
-            p1.Index.X = x - w;
+            p1.Index.X = x_base - w;
             p1.Index.Y = h + y;
             p1.Normal = uvec3(-w, 0, z);
             p1.SetImageData(&ImageData);
             pixels->push_back(p1);
 
             PixelInfo p2;
-            p2.Index.X = x + w;
+            p2.Index.X = x_base + w;
             p2.Index.Y = h + y;
             p2.Normal = uvec3(w, 0, z);
             p2.SetImageData(&ImageData);
