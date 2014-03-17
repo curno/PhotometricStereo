@@ -13,7 +13,7 @@ public:
 
     PixelInfoSet BallPixels;
     PixelInfoSet ObjectPixels;
-    PixelInfoSet TargetBallPixels;
+    PixelInfoSet TargetObjectPixels;
 
     shared_ptr<vector<uvec3>> LightningDirections;
 

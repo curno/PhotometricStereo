@@ -49,7 +49,8 @@ public:
     QPushButton *pushButtonPS;
     QPushButton *pushButtonCheckMatch;
     QPushButton *pushButtonShadowDifference;
-    QPushButton *pushButtonPlotTargetCircle;
+    QComboBox *comboBoxTargetObject;
+    QPushButton *pushButtonPlotTargetObject;
     QPushButton *pushButtonSwitch;
     QPushButton *pushButtonSaveImageSet;
     QPushButton *pushButtonPrevious;
@@ -270,10 +271,16 @@ public:
 
         verticalLayout->addWidget(pushButtonShadowDifference);
 
-        pushButtonPlotTargetCircle = new QPushButton(dockWidgetContents_5);
-        pushButtonPlotTargetCircle->setCheckable(true);
+        comboBoxTargetObject = new QComboBox;
+        comboBoxTargetObject->addItem("Sphere");
+        comboBoxTargetObject->addItem("Cylinder");
+        comboBoxTargetObject->addItem("Cone");
+        verticalLayout->addWidget(comboBoxTargetObject);
 
-        verticalLayout->addWidget(pushButtonPlotTargetCircle);
+        pushButtonPlotTargetObject = new QPushButton(dockWidgetContents_5);
+        pushButtonPlotTargetObject->setCheckable(true);
+
+        verticalLayout->addWidget(pushButtonPlotTargetObject);
 
         pushButtonSwitch = new QPushButton(dockWidgetContents_5);
 
@@ -337,7 +344,8 @@ public:
         LogicWidgets_.push_back(pushButtonPS);
         LogicWidgets_.push_back(pushButtonCheckMatch);
         LogicWidgets_.push_back(pushButtonShadowDifference);
-        LogicWidgets_.push_back(pushButtonPlotTargetCircle);
+        LogicWidgets_.push_back(comboBoxTargetObject);
+        LogicWidgets_.push_back(pushButtonPlotTargetObject);
         LogicWidgets_.push_back(lineEditFolder);
         LogicWidgets_.push_back(lineEditSmoothNormal);
         LogicWidgets_.push_back(lineEditShadowThreshold);
@@ -362,7 +370,7 @@ public:
         pushButtonPS->setText(QApplication::translate("MainWindowClass", "Reconstruct", 0));
         pushButtonCheckMatch->setText(QApplication::translate("MainWindowClass", "Match", 0));
         pushButtonShadowDifference->setText(QApplication::translate("MainWindowClass", "Shadow Difference", 0));
-        pushButtonPlotTargetCircle->setText(QApplication::translate("MainWindowClass", "Plot Target Circle", 0));
+        pushButtonPlotTargetObject->setText(QApplication::translate("MainWindowClass", "Plot Target Circle", 0));
         pushButtonSwitch->setText(QApplication::translate("MainWindowClass", "Switch Image Sets", 0));
         pushButtonSaveImageSet->setText(QApplication::translate("MainWindowClass", "Save Image Sets", 0));
         pushButtonPrevious->setText(QApplication::translate("MainWindowClass", "<<", 0));

@@ -550,6 +550,7 @@ $(SolutionDir)tools/VersionInfo/VersionInfo.exe BUILD-TRY 1 $(SolutionDir)\tools
     <ClCompile Include="PixelInfoSet.cpp" />
     <ClCompile Include="PixelInfoSetView.cpp" />
     <ClCompile Include="PixelInfoSetViewDialog.cpp" />
+    <ClCompile Include="PSModel.cpp" />
     <ClCompile Include="RelightningThread.cpp" />
     <ClCompile Include="RelightningView.cpp" />
     <ClCompile Include="stdafx.cpp">
