@@ -31,7 +31,7 @@ void PixelInfoSetView::keyReleaseEvent( QKeyEvent *e )
     {
         SkipDarkPixel_ = !SkipDarkPixel_;
         e->accept();
-        update();
+        Update();
     }
     else if (e->key() == Qt::Key_S && e->modifiers() & Qt::ControlModifier)
     {
@@ -47,6 +47,7 @@ void PixelInfoSetView::keyReleaseEvent( QKeyEvent *e )
     {
         if (Parent_ != nullptr)
             Parent_->ToggleConfigurationVisibility();
+        Update();
         e->accept();
     }
 }
