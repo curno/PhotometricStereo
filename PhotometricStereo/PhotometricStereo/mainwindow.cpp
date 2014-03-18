@@ -241,24 +241,27 @@ void MainWindow::On_pushButtonPlotTargetCircle__clicked(bool checked)
     {
         ui.imageView->SetCurrentState(ImageView::NoneState::Instance());
         if (Model != nullptr)
-        {
-            Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
-            
+        { 
+            PixelInfoSet pixels;
             if (ui.comboBoxTargetObject->currentIndex() == 0) // sphere
-                Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
+            {
+                pixels = Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
+            }
             else if (ui.comboBoxTargetObject->currentIndex() == 1) // cylinder
             {
-                QRect r = ui.imageView->GetPlotTargetCylinder();
-                Model->LoadTargetCylinderPixels(r.x(), r.y(), r.width(), r.height());
+                QRect region = ui.imageView->GetPlotTargetCylinder();
+                pixels = Model->LoadTargetCylinderPixels(region.x(), region.y(), region.width(), region.height());
             }
             else if (ui.comboBoxTargetObject->currentIndex() == 2) //cone
             {
-                QRect r = ui.imageView->GetPlotTargetCone();
-                Model->LoadTargetConePixels(r.bottom(), r.top(), r.left(), r.right());
+                QRect region = ui.imageView->GetPlotTargetCone();
+                pixels = Model->LoadTargetConePixels(region.bottom(), region.top(), region.left(), region.right());
             }
 
             double error = Model->ComputeAverageError();
             QMessageBox::information(this, "Error", QString("The average error angle is %0 degree.").arg(QString::number(error * 180.0 / PI, 'g', 6)));
+            ShowRelightingView(pixels, Model->Configuration.ObjectLoadingRegion, "Ground Truth");
+            ShowDepthView(  pixels, Model->Configuration.ObjectLoadingRegion, "Ground Truth");
             ui.imageView->update();
         }
         
@@ -381,11 +384,7 @@ void MainWindow::ResetUI()
 
 void MainWindow::ShowRelightingView()
 {
-    PixelInfoSetViewDialog *rv = new PixelInfoSetViewDialog(this, new RelightningView(nullptr));
-    rv->SetData(Model->ImageData.ObjectPixels, Model->Configuration.ObjectLoadingRegion, Model->Configuration.Description);
-    rv->show();
-    rv->Update();
-    ui.viewHistory->AddViewHistory(rv);
+    ShowRelightingView(Model->ImageData.ObjectPixels, Model->Configuration.ObjectLoadingRegion, Model->Configuration.Description);
 }
 
 void MainWindow::ShowRelightingView(const string &file_name)
@@ -397,13 +396,18 @@ void MainWindow::ShowRelightingView(const string &file_name)
     ui.viewHistory->AddViewHistory(view);
 }
 
+void MainWindow::ShowRelightingView(PixelInfoSet pixels, QRect region, const string &info)
+{
+    PixelInfoSetViewDialog *rv = new PixelInfoSetViewDialog(this, new RelightningView(nullptr));
+    rv->SetData(pixels, region, info);
+    rv->show();
+    rv->Update();
+    ui.viewHistory->AddViewHistory(rv);
+}
+
 void MainWindow::ShowDepthView(bool copy /*= false*/)
 {
-    PixelInfoSetViewDialog *view = new PixelInfoSetViewDialog(this, new DepthView(nullptr));
-    view->SetData(Model->ImageData.ObjectPixels, Model->Configuration.ObjectLoadingRegion, Model->Configuration.Description, copy);
-    view->show();
-    view->Update();
-    ui.viewHistory->AddViewHistory(view);
+    ShowDepthView(Model->ImageData.ObjectPixels, Model->Configuration.ObjectLoadingRegion, Model->Configuration.Description, copy);
 }
 
 void MainWindow::ShowDepthView(const string &file_name)
@@ -413,6 +417,15 @@ void MainWindow::ShowDepthView(const string &file_name)
     view->show();
     view->Update();
 
+    ui.viewHistory->AddViewHistory(view);
+}
+
+void MainWindow::ShowDepthView( PixelInfoSet pixels, QRect region, const string &info, bool copy /*= false*/ )
+{
+    PixelInfoSetViewDialog *view = new PixelInfoSetViewDialog(this, new DepthView(nullptr));
+    view->SetData(pixels, region, info, copy);
+    view->show();
+    view->Update();
     ui.viewHistory->AddViewHistory(view);
 }
 

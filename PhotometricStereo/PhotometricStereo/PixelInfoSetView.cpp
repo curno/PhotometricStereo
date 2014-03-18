@@ -43,6 +43,17 @@ void PixelInfoSetView::keyReleaseEvent( QKeyEvent *e )
         DumpToFile(FromQStringToStdString(file_name));
         e->accept();
     }
+    else if (e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier)
+    {
+        QString dir = QFileDialog::getExistingDirectory(this, tr("Save Images..."), ".", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+
+        if (!dir.isEmpty())
+        {
+            this->Update();
+            SaveImage(dir, false);
+        }
+        e->accept();
+    }
     else if (e->key() == Qt::Key_C)
     {
         if (Parent_ != nullptr)

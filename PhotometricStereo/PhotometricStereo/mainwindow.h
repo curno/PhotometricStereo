@@ -65,9 +65,11 @@ private:
     void ResetUI();
     void UpdateUI();
     void ShowRelightingView();
-    void ShowDepthView(bool copy = false);
-    void ShowDepthView(const string &file_name);
     void ShowRelightingView(const string &file_name);
+    void ShowRelightingView(PixelInfoSet pixels, QRect region, const string &info);
+    void ShowDepthView(bool copy = false);
+    void ShowDepthView(PixelInfoSet pixels, QRect region, const string &info, bool copy = false);
+    void ShowDepthView(const string &file_name);
 public:
     bool LoadModel(const QString &dir);
 private:

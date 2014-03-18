@@ -79,7 +79,7 @@ public:
 
     bool DarkPixel() const;
     bool BoundaryPixel() const;
-
+    void SetDarkPixel(bool dark) { Dark_ = (dark ? 2 : 1); }
     string LightningVectorStr() const;
 
     double GetManhatonDistance(const NormalType *vector, bool self_reference, const double *gray_scal_weight)

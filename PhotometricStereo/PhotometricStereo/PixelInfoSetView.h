@@ -37,6 +37,26 @@ public:
         Update();
     }
 
+    void SaveImage(const QString &file_or_dir_name, bool only_self = true)
+    {
+        if (only_self)
+            this->grabFrameBuffer().save(file_or_dir_name);
+        else
+        {
+            QDir dir(file_or_dir_name);
+
+            if (ConnectedViews_ == nullptr)
+                SaveImage(dir.filePath("0.bmp"), true);
+            else
+            {
+                int index = 0;
+                for each (PixelInfoSetView *view in *ConnectedViews_)
+                    view->SaveImage(dir.filePath(QString::number(index++) + ".bmp"), true);
+            }
+        }
+    }
+
+
     string GetDescription() const { return Description_; }
 
     void SetData(const string &file_name)

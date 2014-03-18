@@ -1,3 +1,8 @@
+Normal
+Normal
+Normal
+Normal
+Index
 #include "stdafx.h"
 
 #include "PSModel.h"
@@ -47,6 +52,7 @@ double PSModel::ComputeAverageError()
     int object_count = ImageData.ObjectPixels->size();
     int target_count = ImageData.TargetObjectPixels->size();
     double angle_sum = 0;
+    int total_pixel_count = 0;
     for (int i = 0; i < target_count; i++)
     {
         PixelInfo &ball = ImageData.TargetObjectPixels[i];
@@ -61,14 +67,14 @@ double PSModel::ComputeAverageError()
                 break;
             }
         }
-        if (!found)
-            angle_sum += PI;
+        if (found)
+            ++total_pixel_count;
     }
-    angle_sum /= target_count;
+    angle_sum /= total_pixel_count;
     return angle_sum;
 }
 
-void PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
+PixelInfoSet PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
 {
     vector<PixelInfo> *pixels = new vector<PixelInfo>; 
 
@@ -84,6 +90,7 @@ void PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
             p1.Index.X = x_base - w;
             p1.Index.Y = h + y;
             p1.Normal = uvec3(-w, 0, z);
+            //p1.Position = vec3(half_width - w, h, z);
             p1.SetImageData(&ImageData);
             pixels->push_back(p1);
 
@@ -91,24 +98,26 @@ void PSModel::LoadTargetCylinderPixels(int x, int y, int width, int height)
             p2.Index.X = x_base + w;
             p2.Index.Y = h + y;
             p2.Normal = uvec3(w, 0, z);
+            //p2.Position = vec3(half_width + w, h, z);
             p2.SetImageData(&ImageData);
             pixels->push_back(p2);
         }
     }
     this->ImageData.TargetObjectPixels.SetData(pixels);
+    return RectanglizePixelInfoSet(ImageData.TargetObjectPixels, Configuration.ObjectLoadingRegion);
 }
 
-void PSModel::LoadTargetConePixels(int bottom, int top, int left, int right)
+PixelInfoSet PSModel::LoadTargetConePixels(int bottom, int top, int left, int right)
 {
     vector<PixelInfo> *pixels = new vector<PixelInfo>; 
 
     int height = bottom - top;
     double R = (right - left) / 2.0;
-    int center_x = left + right / 2;
+    int center_x = (left + right) / 2;
     int base_y = top;
     for (int h = 0; h <= height; ++h)
     {
-        double r = h * height / R;
+        double r = h * R / height;
         for (int w = 0; w < r; ++w)
         {
             double z = std::sqrt(r * r - w * w);
@@ -116,6 +125,7 @@ void PSModel::LoadTargetConePixels(int bottom, int top, int left, int right)
             p1.Index.X = (center_x - w);
             p1.Index.Y = base_y + h;
             p1.Normal = uvec3(-w * h, -z * z - w * w, z * h);
+            //p1.Position = vec3(R - w, h, z);
             p1.SetImageData(&ImageData);
             pixels->push_back(p1);
 
@@ -123,12 +133,15 @@ void PSModel::LoadTargetConePixels(int bottom, int top, int left, int right)
             p2.Index.X = (center_x + w);
             p2.Index.Y = base_y + h;
             p2.Normal = uvec3(w * h, - z * z - w * w, z * h);
+            //p2.Position = vec3(R + w, h, z);
             p2.SetImageData(&ImageData);
             pixels->push_back(p2);
         }
     }
 
     this->ImageData.TargetObjectPixels.SetData(pixels);
+    return RectanglizePixelInfoSet(ImageData.TargetObjectPixels, Configuration.ObjectLoadingRegion);
+
 }
 
 void PSModel::CreateShadowRemovedImagesPerPixel()
@@ -294,11 +307,11 @@ void PSModel::CalcLigtningDirections(int sample_size /*= 3*/)
     delete [] b;
 }
 
-void PSModel::LoadObjectDepthInternal()
+void PSModel::LoadObjectDepthInternal(PixelInfoSet pixels, QRect region)
 {
     PhotometricStereoMathInitialize();
-    int w = Configuration.ObjectLoadingRegion.width();
-    int h = Configuration.ObjectLoadingRegion.height();
+    int w = region.width();
+    int h = region.height();
 
     mxArray *dzdx = mxCreateDoubleMatrix(h, w, mxREAL);
     mxArray *dzdy = mxCreateDoubleMatrix(h, w, mxREAL);
@@ -313,7 +326,7 @@ void PSModel::LoadObjectDepthInternal()
     {
         for (int j = 0; j < h; j++)
         {
-            PixelInfo &p = ImageData.ObjectPixels[j * w + i];
+            PixelInfo &p = pixels[j * w + i];
             if (p.Normal.Z == 0.0)
             {
                 dzdy_data[index] = -p.Normal.Y < 0 ? FLT_MIN : FLT_MAX;
@@ -337,7 +350,7 @@ void PSModel::LoadObjectDepthInternal()
     {
         for (int j = 0; j < h; j++)
         {
-            PixelInfo &p = ImageData.ObjectPixels[j * w + i];
+            PixelInfo &p = pixels[j * w + i];
             p.Position.Z = retval[index++] / 6.0;
         }
     }
@@ -347,29 +360,29 @@ void PSModel::LoadObjectDepthInternal()
         for (int j = 0; j < h; j++)
         {
             vec3 r;
-            vec3 p = ImageData.ObjectPixels[j * w + i].Position;
+            vec3 p = pixels[j * w + i].Position;
             if (i > 0 && j > 0)
             {
-                vec3 n = (ImageData.ObjectPixels[(j - 1) * w + i].Position - p) ^ (ImageData.ObjectPixels[j * w + i - 1].Position - p);
+                vec3 n = (pixels[(j - 1) * w + i].Position - p) ^ (pixels[j * w + i - 1].Position - p);
                 r += n / n.GetLength();
             }
             if (i > 0 && j < h - 1)
             {
-                vec3 n = (ImageData.ObjectPixels[j * w + i - 1].Position - p) ^ (ImageData.ObjectPixels[(j + 1) * w + i].Position - p);
+                vec3 n = (pixels[j * w + i - 1].Position - p) ^ (pixels[(j + 1) * w + i].Position - p);
                 r += n / n.GetLength();
             }
             if (i < w - 1 && j < h - 1)
             {
-                vec3 n = (ImageData.ObjectPixels[(j + 1) * w + i].Position - p) ^ (ImageData.ObjectPixels[j * w + i + 1].Position - p);
+                vec3 n = (pixels[(j + 1) * w + i].Position - p) ^ (pixels[j * w + i + 1].Position - p);
                 r += n / n.GetLength();
             }
             if (i < w - 1 && j > 0)
             {
-                vec3 n = (ImageData.ObjectPixels[j * w + i + 1].Position - p) ^ (ImageData.ObjectPixels[(j - 1) * w + i].Position - p);
+                vec3 n = (pixels[j * w + i + 1].Position - p) ^ (pixels[(j - 1) * w + i].Position - p);
                 r += n / n.GetLength();
             }
             // here, use the negative flag '-', because the y-axis of the object space is from up to down of the screen.
-            ImageData.ObjectPixels[j * w + i].ActualNormal = -uvec3(r.X, r.Y, r.Z);
+            pixels[j * w + i].ActualNormal = -uvec3(r.X, r.Y, r.Z);
         }
     }
 }
@@ -725,6 +738,7 @@ void PSModel::LoadBallPixelsInternal(const CircleType &circle, PixelInfoSet &pix
             p1.Index.X = (X - w);
             p1.Index.Y = (Y - h);
             p1.Normal = uvec3(-w, -h, z);
+            //p1.Position = vec3(R - w, R - h, z);
             p1.SetImageData(&ImageData);
             pixels->push_back(p1);
 
@@ -732,6 +746,7 @@ void PSModel::LoadBallPixelsInternal(const CircleType &circle, PixelInfoSet &pix
             p2.Index.X = (X - w);
             p2.Index.Y = (Y + h);
             p2.Normal = uvec3(-w, h, z);
+            //p2.Position = vec3(R - w, R + h, z);
             p2.SetImageData(&ImageData);
             pixels->push_back(p2);
 
@@ -739,6 +754,7 @@ void PSModel::LoadBallPixelsInternal(const CircleType &circle, PixelInfoSet &pix
             p3.Index.X = (X + w);
             p3.Index.Y = (Y + h);
             p3.Normal = uvec3(w, h, z);
+            //p3.Position = vec3(R + w, R + h, z);
             p3.SetImageData(&ImageData);
             pixels->push_back(p3);
 
@@ -746,6 +762,7 @@ void PSModel::LoadBallPixelsInternal(const CircleType &circle, PixelInfoSet &pix
             p4.Index.X = (X + w);
             p4.Index.Y = (Y - h);
             p4.Normal = uvec3(w, -h, z);
+            //p4.Position = vec3(R + w, R - h, z);
             p4.SetImageData(&ImageData);
             pixels->push_back(p4);
         }
@@ -872,7 +889,7 @@ void PSModel::SmoothObjectNormalField(int count)
 
 void PSModel::LoadObjectDepth()
 {
-    LoadObjectDepthInternal();
+    LoadObjectDepthInternal(ImageData.ObjectPixels, Configuration.ObjectLoadingRegion);
 
     // configuration
     // Nothing to do
@@ -908,9 +925,10 @@ void PSModel::LoadObjectPixelNormals()
     Configuration.ElapsedMiliSeconds = time.elapsed();
 }
 
-void PSModel::LoadTargetBallPixels(CircleType circle)
+PixelInfoSet PSModel::LoadTargetBallPixels(CircleType circle)
 {
     LoadBallPixelsInternal(circle, ImageData.TargetObjectPixels);
+    return RectanglizePixelInfoSet(ImageData.TargetObjectPixels, Configuration.ObjectLoadingRegion);
     // progress
     // TODO
 }
@@ -935,4 +953,49 @@ PSModel * PSModel::CreateModel(const string &dir)
 PSModel::PSModel()
 {
     Initialize();
+}
+
+PixelInfoSet PSModel::RectanglizePixelInfoSet(PixelInfoSet pixels, QRect region)
+{
+    int W = region.width();
+    int H = region.height();
+    vector<PixelInfo> *retval_pointer = new vector<PixelInfo>();
+    retval_pointer->reserve(W * H);
+    auto &pixel_array = *pixels;
+    for (int h = 0; h < H; ++h)
+    {
+        for (int w = 0; w < W; ++w)
+        {
+            PixelInfo p1;
+            p1.Index.X = (region.x() + w);
+            p1.Index.Y = (region.y() + h);
+            p1.Position.X = w;
+            p1.Position.Y = h;
+            p1.SetImageData(nullptr);
+
+            bool found = false;
+            for each (const PixelInfo &pixel in pixel_array)
+            {
+                if (pixel.Index == p1.Index)
+                {
+                    found = true;
+                    p1.Normal = pixel.Normal;
+                    p1.SetDarkPixel(false);
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                p1.Normal = uvec3(0.0, 0.0, 1.0);
+                p1.SetDarkPixel(true);
+            }
+            retval_pointer->push_back(p1);
+        }
+    }
+
+    PixelInfoSet retval;
+    retval.SetData(retval_pointer);
+    LoadObjectDepthInternal(retval, region);
+    return retval;
 }

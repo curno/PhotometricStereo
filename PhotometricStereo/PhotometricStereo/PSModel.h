@@ -129,9 +129,9 @@ public:
 
     void LoadBallPixels();
 
-    void LoadTargetBallPixels(CircleType circle);
-    void LoadTargetCylinderPixels(int x, int y, int width, int height);
-    void LoadTargetConePixels(int bottom, int top, int left, int right);
+    PixelInfoSet LoadTargetBallPixels(CircleType circle);
+    PixelInfoSet LoadTargetCylinderPixels(int x, int y, int width, int height);
+    PixelInfoSet LoadTargetConePixels(int bottom, int top, int left, int right);
 
 
     void LoadObjectPixelNormals();
@@ -309,7 +309,7 @@ private:
 
     // Calculate the depth of the object pixels
     // as well as the actual normal of the pixels
-    void LoadObjectDepthInternal();
+    void LoadObjectDepthInternal(PixelInfoSet pixels, QRect region);
     void CalcLigtningDirections(int sample_size = 3);
 
     void CreateDifferenceShadowImages();
@@ -322,6 +322,8 @@ private:
 
     void CreateShadowRemovedImagesPerPixel();
 
+
+    PixelInfoSet RectanglizePixelInfoSet(PixelInfoSet pixels, QRect region);
 private:
     // GrayScaleWeight
     double GrayScaleWeight[256];

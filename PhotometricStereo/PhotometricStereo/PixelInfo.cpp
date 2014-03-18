@@ -50,7 +50,7 @@ bool PixelInfo::BoundaryPixel() const
 {
     if (Boundary_ != 0)
         return Boundary_ == 2;
-    if (!DarkPixel())
+    if (!DarkPixel() && ImageModel_ != nullptr)
     {
         PixelInfo pi = ImageModel_->CreatePixelInfo(Index_.X - 1, Index_.Y);
         if (!pi.IsInvalid && pi.DarkPixel())
