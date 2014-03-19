@@ -26,7 +26,7 @@ struct ImageDataCubeBase abstract
             cvReleaseImage(&(*i));
         delete []Cube_;
     }
-
+    
     IplImage *GetCvImage(int index)
     {
         assert(CvImageCache_[index] != nullptr);
@@ -112,6 +112,7 @@ public:
         }
 
         return CreateNormalCubeFromCvImages<ImageDataCubeType<NormalCube>::Type>(images);
+
     }
 
     static double GetGrayScaleAt(IplImage *image, int x, int y)
