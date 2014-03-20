@@ -46,12 +46,12 @@ public:
             QDir dir(file_or_dir_name);
 
             if (ConnectedViews_ == nullptr)
-                SaveImage(dir.filePath("0.bmp"), true);
+                SaveImage(GetNewFileName("", ".bmp", dir), true);
             else
             {
                 int index = 0;
                 for each (PixelInfoSetView *view in *ConnectedViews_)
-                    view->SaveImage(dir.filePath(QString::number(index++) + ".bmp"), true);
+                    view->SaveImage(GetNewFileName("", ".bmp", dir), true);
             }
         }
     }
@@ -70,16 +70,26 @@ public:
     virtual void ResetModelViewMatrix() { }
     virtual void Clear() { }
 
-    void DumpToFile(const string &file_name)
+    void DumpToFile(const string &file_or_dir_name, bool only_self = true)
     {
-        ofstream of(file_name, ios::out | ios::binary);
-        Write(of, Region_.left());
-        Write(of, Region_.top());
-        Write(of, Region_.width());
-        Write(of, Region_.height());
-        Write(of, Pixels_);
-        Write(of, Description_);
+        if (only_self)
+            DumpToFileInternal(file_or_dir_name);
+        else
+        {
+            QDir dir(FromStdStringToQString(file_or_dir_name));
+
+            if (ConnectedViews_ == nullptr)
+                DumpToFile(FromQStringToStdString(GetNewFileName("", ".vdf", dir)), true);
+            else
+            {
+                int index = 0;
+                for each (PixelInfoSetView *view in *ConnectedViews_)
+                    view->DumpToFile(FromQStringToStdString(GetNewFileName("", ".vdf", dir)), true);
+            }
+        }
+
     }
+
 
     QRect GetRegion() const { return Region_; }
 
@@ -89,6 +99,7 @@ public:
         ApplySettingToConnectedViews();
     }
 protected:
+    void DumpToFileInternal(const string & file_name);
     void keyReleaseEvent(QKeyEvent *e) override;
 
     // draging
@@ -269,5 +280,17 @@ protected:
     virtual void ApplySetting(PixelInfoSetView *view) { view->SkipDarkPixel_ = SkipDarkPixel_; }
 
     virtual char *GetMimeType() const { return nullptr; }
+
+    QString GetNewFileName(const QString &prefix, const QString &extention, const QDir &dir)
+    {
+        int number = 0;
+        while (true)
+        {
+            QString name = dir.filePath(prefix + QString::number(number) + extention);
+            if (!QFileInfo(name).exists())
+                return name;
+            ++number;
+        }
+    }
 };
 

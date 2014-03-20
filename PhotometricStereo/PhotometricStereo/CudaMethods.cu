@@ -210,7 +210,7 @@ cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double 
     int *ptr_result = nullptr;
     double *ptr_gray_scale_weight = nullptr;
 
-    int per_batch_count = 399999999 / ball_pixel_count / dimension + 1;
+    int per_batch_count = 299999999 / ball_pixel_count / dimension + 1;
     int batch_count = ((object_size % per_batch_count == 0) ? 0 : 1) + object_size / per_batch_count;
 
     int threads_num = 256;

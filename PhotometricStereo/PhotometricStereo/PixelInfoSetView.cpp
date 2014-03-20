@@ -35,12 +35,12 @@ void PixelInfoSetView::keyReleaseEvent( QKeyEvent *e )
     }
     else if (e->key() == Qt::Key_S && e->modifiers() & Qt::ControlModifier)
     {
-        QString filter = "View dump files (*.vdf)";
-        QString file_name = QFileDialog::getSaveFileName(this, tr("Dump to file..."), ".", filter, &filter, QFileDialog::DontUseNativeDialog);
+        QString folder_name = QFileDialog::getExistingDirectory(this, tr("Dump to file..."), ".", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
 
-        if (!file_name.toLower().endsWith(".vdf"))
-            file_name += ".vdf";
-        DumpToFile(FromQStringToStdString(file_name));
+        if (!folder_name.isEmpty())
+        {
+            DumpToFile(FromQStringToStdString(folder_name), false);
+        }
         e->accept();
     }
     else if (e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier)
@@ -61,4 +61,15 @@ void PixelInfoSetView::keyReleaseEvent( QKeyEvent *e )
         Update();
         e->accept();
     }
+}
+
+void PixelInfoSetView::DumpToFileInternal(const string & file_name)
+{
+    ofstream of(file_name, ios::out | ios::binary);
+    Write(of, Region_.left());
+    Write(of, Region_.top());
+    Write(of, Region_.width());
+    Write(of, Region_.height());
+    Write(of, Pixels_);
+    Write(of, Description_);
 }

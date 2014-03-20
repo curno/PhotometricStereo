@@ -12,7 +12,7 @@ namespace ImagePreprocess
     {
         static void Main(string[] args)
         {
-            string input_folder_name = @"F:\Data";
+            string input_folder_name = @"F:\新建文件夹";
             DirectoryInfo di = new DirectoryInfo(input_folder_name);
             foreach (DirectoryInfo sub_di in di.GetDirectories())
             {
@@ -25,7 +25,7 @@ namespace ImagePreprocess
         private static void Transform(string input_folder_name, string output_folder_name)
         {
             Console.WriteLine("transforming files from" + input_folder_name + " to" + output_folder_name);
-            int width = 600;
+            int width = 1000;
             DirectoryInfo input_di = new DirectoryInfo(input_folder_name);
             if (!input_di.Exists)
                 return;

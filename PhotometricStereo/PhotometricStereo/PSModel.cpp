@@ -1,8 +1,3 @@
-Normal
-Normal
-Normal
-Normal
-Index
 #include "stdafx.h"
 
 #include "PSModel.h"
@@ -508,11 +503,11 @@ void PSModel::SmoothObjectNormalFieldInternal(PixelInfoSet pixels, int w, int h)
             current++;
         }
     }
-}
+} 
 
 void PSModel::CalcLinearCombinationInternal(int *left, int right, vec3 &result)
 {
-    static const int SampleSize = 3;
+    static const int SampleSize = 6;
 
     int light_count = ImageData.NormalCube->C;
 
