@@ -123,22 +123,26 @@ public:
         return ImageData.BallPixels[min_index];
     }
 
+    pair<QImage, PixelInfoSet> GetReconstructDifference();
 public:
 
     double ComputeAverageError();
 
     void LoadBallPixels();
 
-    PixelInfoSet LoadTargetBallPixels(CircleType circle);
-    PixelInfoSet LoadTargetCylinderPixels(int x, int y, int width, int height);
-    PixelInfoSet LoadTargetConePixels(int bottom, int top, int left, int right);
+    void LoadTargetBallPixels(CircleType circle);
+    void LoadTargetCylinderPixels(int x, int y, int width, int height);
+    void LoadTargetConePixels(int bottom, int top, int left, int right);
 
+    PixelInfoSet GetGroundTruth();
 
     void LoadObjectPixelNormals();
 
     void LoadObjectDepth();
 
     void SmoothObjectNormalField(int count);
+
+
     /*// This method is same as the one below, not very effective.
     //void CreateShadowRemovedImagesUsingLightingDirections()
     //{
@@ -310,6 +314,9 @@ private:
     // Calculate the depth of the object pixels
     // as well as the actual normal of the pixels
     void LoadObjectDepthInternal(PixelInfoSet pixels, QRect region);
+
+    void LoadActuralNormal(PixelInfoSet pixels, QRect region);
+
     void CalcLigtningDirections(int sample_size = 3);
 
     void CreateDifferenceShadowImages();

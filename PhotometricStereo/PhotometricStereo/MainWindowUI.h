@@ -55,6 +55,8 @@ public:
     QPushButton *pushButtonSaveImageSet;
     QPushButton *pushButtonPrevious;
     QPushButton *pushButtonNext;
+    QPushButton *pushButtonGroundTruth;
+    QPushButton *pushButtonReconstructionError;
     QCheckBox *checkBoxCuda;
     QLabel *labelIndex;
     ViewHistoryWidget *viewHistory;
@@ -282,6 +284,11 @@ public:
 
         verticalLayout->addWidget(pushButtonPlotTargetObject);
 
+        pushButtonGroundTruth = new QPushButton(dockWidgetContents_5);
+        verticalLayout->addWidget(pushButtonGroundTruth);
+
+        pushButtonReconstructionError = new QPushButton(dockWidgetContents_5);
+        verticalLayout->addWidget(pushButtonReconstructionError);
         pushButtonSwitch = new QPushButton(dockWidgetContents_5);
 
         verticalLayout->addWidget(pushButtonSwitch);
@@ -346,6 +353,8 @@ public:
         LogicWidgets_.push_back(pushButtonShadowDifference);
         LogicWidgets_.push_back(comboBoxTargetObject);
         LogicWidgets_.push_back(pushButtonPlotTargetObject);
+        LogicWidgets_.push_back(pushButtonGroundTruth);
+        LogicWidgets_.push_back(pushButtonReconstructionError);
         LogicWidgets_.push_back(lineEditFolder);
         LogicWidgets_.push_back(lineEditSmoothNormal);
         LogicWidgets_.push_back(lineEditShadowThreshold);
@@ -370,7 +379,9 @@ public:
         pushButtonPS->setText(QApplication::translate("MainWindowClass", "Reconstruct", 0));
         pushButtonCheckMatch->setText(QApplication::translate("MainWindowClass", "Match", 0));
         pushButtonShadowDifference->setText(QApplication::translate("MainWindowClass", "Shadow Difference", 0));
-        pushButtonPlotTargetObject->setText(QApplication::translate("MainWindowClass", "Plot Target Circle", 0));
+        pushButtonPlotTargetObject->setText(QApplication::translate("MainWindowClass", "Plot Target Object", 0));
+        pushButtonGroundTruth->setText(QApplication::translate("MainWindowClass", "Ground Truth", 0));
+        pushButtonReconstructionError->setText(QApplication::translate("MainWindowClass", "Error", 0));
         pushButtonSwitch->setText(QApplication::translate("MainWindowClass", "Switch Image Sets", 0));
         pushButtonSaveImageSet->setText(QApplication::translate("MainWindowClass", "Save Image Sets", 0));
         pushButtonPrevious->setText(QApplication::translate("MainWindowClass", "<<", 0));

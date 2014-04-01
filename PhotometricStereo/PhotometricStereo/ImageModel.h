@@ -14,6 +14,7 @@ public:
     PixelInfoSet BallPixels;
     PixelInfoSet ObjectPixels;
     PixelInfoSet TargetObjectPixels;
+    PixelInfoSet GroundTruth;
 
     shared_ptr<vector<uvec3>> LightningDirections;
 

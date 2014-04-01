@@ -42,6 +42,8 @@ private slots:
     void On_pushButtonDetectShadow_clicked();
     void On_pushButtonShadowDifference_clicked(bool checked);
     void On_pushButtonPlotTargetCircle__clicked(bool checked);
+    void On_pushButtonReconstructionDifference__clicked();
+    void On_pushButtonGroundTruth__clicked();
     void On_pushButtonLoadDepthView_clicked();
     void On_checkable_button_clicked(bool checked);
     void On_relightningThread_finished();

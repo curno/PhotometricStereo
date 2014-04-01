@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui.pushButtonShadowDifference, &QPushButton::clicked, this, &MainWindow::On_checkable_button_clicked);
     connect(ui.pushButtonCheckMatch, &QPushButton::clicked, this, &MainWindow::On_checkable_button_clicked);
     connect(ui.pushButtonPlotTargetObject, &QPushButton::clicked, this, &MainWindow::On_pushButtonPlotTargetCircle__clicked);
+    connect(ui.pushButtonGroundTruth, &QPushButton::clicked, this, &MainWindow::On_pushButtonGroundTruth__clicked);
+    connect(ui.pushButtonReconstructionError, &QPushButton::clicked, this, &MainWindow::On_pushButtonReconstructionDifference__clicked);
     
     ActionShowModelConfiguration_ = new QAction(this);
     ActionShowModelConfiguration_->setShortcut( Qt::Key_P);
@@ -242,31 +244,59 @@ void MainWindow::On_pushButtonPlotTargetCircle__clicked(bool checked)
         ui.imageView->SetCurrentState(ImageView::NoneState::Instance());
         if (Model != nullptr)
         { 
-            PixelInfoSet pixels;
             if (ui.comboBoxTargetObject->currentIndex() == 0) // sphere
             {
-                pixels = Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
+                Model->LoadTargetBallPixels(ui.imageView->GetPlotTargetCircle());
             }
             else if (ui.comboBoxTargetObject->currentIndex() == 1) // cylinder
             {
                 QRect region = ui.imageView->GetPlotTargetCylinder();
-                pixels = Model->LoadTargetCylinderPixels(region.x(), region.y(), region.width(), region.height());
+                Model->LoadTargetCylinderPixels(region.x(), region.y(), region.width(), region.height());
             }
             else if (ui.comboBoxTargetObject->currentIndex() == 2) //cone
             {
                 QRect region = ui.imageView->GetPlotTargetCone();
-                pixels = Model->LoadTargetConePixels(region.bottom(), region.top(), region.left(), region.right());
+                Model->LoadTargetConePixels(region.bottom(), region.top(), region.left(), region.right());
             }
 
-            double error = Model->ComputeAverageError();
-            QMessageBox::information(this, "Error", QString("The average error angle is %0 degree.").arg(QString::number(error * 180.0 / PI, 'g', 6)));
-            ShowRelightingView(pixels, Model->Configuration.ObjectLoadingRegion, "Ground Truth");
-            ShowDepthView(  pixels, Model->Configuration.ObjectLoadingRegion, "Ground Truth");
-            ui.imageView->update();
+           
         }
         
     }
 }
+
+void MainWindow::On_pushButtonGroundTruth__clicked()
+{
+    if (Model == nullptr)
+        return;
+    PixelInfoSet pixels = Model->GetGroundTruth();
+    ShowRelightingView(pixels, Model->Configuration.ObjectLoadingRegion, "Ground Truth");
+    ShowDepthView(pixels, Model->Configuration.ObjectLoadingRegion, "Ground Truth");
+}
+
+
+void MainWindow::On_pushButtonReconstructionDifference__clicked()
+{
+    if (Model == nullptr)
+        return;
+    double error = Model->ComputeAverageError();
+    QMessageBox::information(this, "Error", QString("The average error angle is %0 degree.").arg(QString::number(error * 180.0 / PI, 'g', 6)));
+
+    PixelInfoSet pixels = Model->GetGroundTruth();
+    
+    auto result = Model->GetReconstructDifference();
+    QLabel *label = new QLabel(this);
+    label->setPixmap(QPixmap::fromImage(result.first));
+    label->setWindowFlags(Qt::Dialog);
+    label->move(200, 200);
+    label->show();
+    ShowDepthView(result.second, Model->Configuration.ObjectLoadingRegion, "Difference");
+    ui.imageView->update();
+    
+
+}
+
+
 void MainWindow::On_pushButtonLoadDepthView_clicked()
 {
     QStringList file_name = QFileDialog::getOpenFileNames(this, tr("Load View..."), ".", tr("View dump file (*.vdf)"), nullptr, QFileDialog::DontUseNativeDialog);
@@ -592,3 +622,6 @@ void MainWindow::On_pushButtonSaveImageSet_clicked()
         }
     }
 }
+
+
+
