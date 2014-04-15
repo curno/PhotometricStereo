@@ -437,13 +437,19 @@ void PSModel::LoadObjectPixelNormals_CPU_NoShadow(CubeType type)
     delete [] data2;
 }
 
-void PSModel::SmoothObjectNormalFieldInternal(PixelInfoSet pixels, int w, int h)
+void PSModel::SmoothObjectNormalFieldInternal(PixelInfoSet pixels, int w, int h, bool only_background)
 {
     int current = 0;
     for (int i = 0; i < h; ++i)
     {
         for (int j = 0; j < w; ++j)
         {
+            if (only_background && !pixels[current].BoundaryPixel() && !pixels[current].DarkPixel())
+            {
+                current++;
+                continue;
+            }
+
             vec3 v = pixels[current].Normal * 4;
 
             if (i > 0)
@@ -840,7 +846,7 @@ void PSModel::CreateShadowRemovedImages()
     }
 }
 
-void PSModel::SmoothObjectNormalField(int count)
+void PSModel::SmoothObjectNormalField(int count, bool only_border)
 {
     // configuration
 
@@ -853,7 +859,7 @@ void PSModel::SmoothObjectNormalField(int count)
     ImageData.ObjectPixels = copy;
     for (int i = 0; i < count; ++i)
     {
-        SmoothObjectNormalFieldInternal(ImageData.ObjectPixels, Configuration.ObjectLoadingRegion.width(), Configuration.ObjectLoadingRegion.height());
+        SmoothObjectNormalFieldInternal(ImageData.ObjectPixels, Configuration.ObjectLoadingRegion.width(), Configuration.ObjectLoadingRegion.height(), only_border);
     }
 }
 

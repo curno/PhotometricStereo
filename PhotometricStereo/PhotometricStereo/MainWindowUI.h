@@ -46,6 +46,7 @@ public:
     QComboBox *comboBoxPixelDistance;
     QPushButton *pushButtonRelightning;
     QPushButton *pushButtonSmoothNormal;
+    QPushButton *pushBUttonSmoothBorderNormal;
     QPushButton *pushButtonPS;
     QPushButton *pushButtonCheckMatch;
     QPushButton *pushButtonShadowDifference;
@@ -246,13 +247,15 @@ public:
         auto *horizontalLaout_SmoothNormal = new QHBoxLayout(widget_smooth_normal);
         horizontalLaout_SmoothNormal->setContentsMargins(0, 0, 0, 0);
         lineEditSmoothNormal = new QLineEdit(dockWidgetContents_5);
-        lineEditSmoothNormal->setValidator(new QIntValidator(1, 10, lineEditSmoothNormal));
+        lineEditSmoothNormal->setValidator(new QIntValidator(1, 99999, lineEditSmoothNormal));
         lineEditSmoothNormal->setText(QString::number(1));
         lineEditSmoothNormal->setFixedWidth(40);
         lineEditSmoothNormal->setFixedHeight(26);
         pushButtonSmoothNormal = new QPushButton(dockWidgetContents_5);
+        pushBUttonSmoothBorderNormal = new QPushButton(dockWidgetContents_5);
         horizontalLaout_SmoothNormal->addWidget(lineEditSmoothNormal, 0);
         horizontalLaout_SmoothNormal->addWidget(pushButtonSmoothNormal, 1);
+        horizontalLaout_SmoothNormal->addWidget(pushBUttonSmoothBorderNormal, 1);
         widget_smooth_normal->setLayout(horizontalLaout_SmoothNormal);
         verticalLayout->addWidget(widget_smooth_normal);
 
@@ -348,6 +351,7 @@ public:
         LogicWidgets_.push_back(comboBoxPixelDistance);
         LogicWidgets_.push_back(pushButtonRelightning);
         LogicWidgets_.push_back(pushButtonSmoothNormal);
+        LogicWidgets_.push_back(pushBUttonSmoothBorderNormal);
         LogicWidgets_.push_back(pushButtonPS);
         LogicWidgets_.push_back(pushButtonCheckMatch);
         LogicWidgets_.push_back(pushButtonShadowDifference);
@@ -375,7 +379,8 @@ public:
         pushButtonPlotCircle->setText(QApplication::translate("MainWindowClass", "Plot Circle", 0));
         pushButtonDetectShadow->setText(QApplication::translate("MainWindowClass", "Detect Shadow", 0));
         pushButtonRelightning->setText(QApplication::translate("MainWindowClass", "Relighting", 0));
-        pushButtonSmoothNormal->setText(QApplication::translate("MainWindowClass", "Smooth Normal", 0));
+        pushButtonSmoothNormal->setText(QApplication::translate("MainWindowClass", "S Normal", 0));
+        pushBUttonSmoothBorderNormal->setText(QApplication::translate("MainWindowClass", "S Border", 0));
         pushButtonPS->setText(QApplication::translate("MainWindowClass", "Reconstruct", 0));
         pushButtonCheckMatch->setText(QApplication::translate("MainWindowClass", "Match", 0));
         pushButtonShadowDifference->setText(QApplication::translate("MainWindowClass", "Shadow Difference", 0));

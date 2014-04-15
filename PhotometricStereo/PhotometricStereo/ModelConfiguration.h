@@ -21,10 +21,11 @@ public:
     PixelDistanceMethod PixelDistance;
     ShadowUseMethod ShadowUse;
     int NormalSmoothing;
+    int BorderNormalSmoothing;
     int ShadowThreshold;
 
     int ElapsedMiliSeconds;
-    ModelConfiguration() : UsingCuda(false), ShadowDetection(ShadowDetectionMethod::Ignore_Method), PixelDistance(PixelDistanceMethod::Manhaton_Method), NormalSmoothing(0), ShadowThreshold(20), ElapsedMiliSeconds(0) { }
+    ModelConfiguration() : UsingCuda(false), ShadowDetection(ShadowDetectionMethod::Ignore_Method), PixelDistance(PixelDistanceMethod::Manhaton_Method), NormalSmoothing(0), BorderNormalSmoothing(0), ShadowThreshold(20), ElapsedMiliSeconds(0) { }
 
     string readonly(Description);
     string GetDescription() const
@@ -50,6 +51,7 @@ public:
             oss << "Shadow Use: "<< "<span style=\"color:" << color <<";\">" << ShadowUseStr(ShadowUse) << "</span>" << endl;
             oss << "Pixel Distance: "<< "<span style=\"color:" << color <<";\">" << PixelDistanceMethodStr(PixelDistance) << "</span>" << endl;
             oss << "Normal Smooth Count: " << NormalSmoothing << endl;
+            oss << "Border Normal Smooth Count: " << BorderNormalSmoothing << endl;
         }
         if (ElapsedMiliSeconds != 0)
         {

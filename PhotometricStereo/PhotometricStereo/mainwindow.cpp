@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui.pushButtonHoughCircle, &QPushButton::clicked, this, &MainWindow::On_houghCircleButton_clicked);
     connect(ui.pushButtonRelightning, &QPushButton::clicked, this, &MainWindow::On_relightningButton_clicked);
     connect(ui.pushButtonSmoothNormal, &QPushButton::clicked, this, &MainWindow::On_pushButtonSmoothNormal_clicked);
+    connect(ui.pushBUttonSmoothBorderNormal, &QPushButton::clicked, this, &MainWindow::On_pushButtonSmoothBorderNormal_clicked);
     connect(ui.pushButtonSwitch, &QPushButton::clicked, this, &MainWindow::On_switchButton_clicked);
     connect(ui.pushButtonSaveImageSet, &QPushButton::clicked, this, &MainWindow::On_pushButtonSaveImageSet_clicked);
     connect(ui.pushButtonGo, &QPushButton::clicked, this, &MainWindow::On_actionImage_Set_triggered);
@@ -160,6 +161,7 @@ void MainWindow::On_relightningButton_clicked(bool checked)
             Model->Configuration.ObjectLoadingRegion = ui.imageView->GetRelightingRect();
             Model->Configuration.ShadowThreshold = ui.lineEditShadowThreshold->text().toInt();
             Model->Configuration.NormalSmoothing = 0;
+            Model->Configuration.BorderNormalSmoothing = 0;
             Model->Configuration.PixelDistance = ModelConfiguration::PixelDistanceMethod(ui.comboBoxPixelDistance->currentIndex());
             Model->Configuration.ShadowUse = ModelConfiguration::ShadowUseMethod(ui.comboBoxShadowUse->currentIndex());
             Model->Configuration.ObjectLoadingCircle = ui.imageView->GetPlotCircle();
@@ -320,11 +322,26 @@ void MainWindow::On_pushButtonSmoothNormal_clicked()
     {
         int count = ui.lineEditSmoothNormal->text().toInt();
         Model->Configuration.NormalSmoothing += count;
-        Model->SmoothObjectNormalField(count);
+        Model->SmoothObjectNormalField(count, false);
         ShowRelightingView();
         ui.lineEditSmoothNormal->setText(QString::number(1));
     }
 }
+
+void MainWindow::On_pushButtonSmoothBorderNormal_clicked()
+{
+    if (Model != nullptr)
+    {
+        int count = ui.lineEditSmoothNormal->text().toInt();
+        Model->Configuration.BorderNormalSmoothing += count;
+        Model->SmoothObjectNormalField(count, true);
+        ShowRelightingView();
+        ui.lineEditSmoothNormal->setText(QString::number(1));
+    }
+}
+
+
+
 
 void MainWindow::On_relightningThread_finished()
 {

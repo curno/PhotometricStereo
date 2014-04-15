@@ -34,6 +34,7 @@ private slots:
     void On_checkMatchButton_clicked();
     void On_relightningButton_clicked(bool checked);
     void On_pushButtonSmoothNormal_clicked();
+    void On_pushButtonSmoothBorderNormal_clicked();
     void On_switchButton_clicked();
     void On_pushButtonSaveImageSet_clicked();
     void On_actionImage_Set_triggered();

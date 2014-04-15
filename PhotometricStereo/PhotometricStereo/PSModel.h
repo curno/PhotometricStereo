@@ -140,7 +140,7 @@ public:
 
     void LoadObjectDepth();
 
-    void SmoothObjectNormalField(int count);
+    void SmoothObjectNormalField(int count, bool only_border);
 
 
     /*// This method is same as the one below, not very effective.
@@ -305,7 +305,7 @@ private:
 
     void CalcLinearCombinationInternal(int *left, int right, vec3 &result);
 
-    void SmoothObjectNormalFieldInternal(PixelInfoSet pixels, int w, int h);
+    void SmoothObjectNormalFieldInternal(PixelInfoSet pixels, int w, int h, bool only_background);
 
     void LoadObjectPixelNormals_CPU_NoShadow(CubeType type);
 
