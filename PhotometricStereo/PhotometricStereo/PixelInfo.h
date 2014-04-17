@@ -82,6 +82,48 @@ public:
     void SetDarkPixel(bool dark) { Dark_ = (dark ? 2 : 1); }
     string LightningVectorStr() const;
 
+    double GetEuclideanDistance(const NormalType *vector, bool self_reference, const double *gray_scal_weight)
+    {
+        if (vector == nullptr)
+            return DBL_MAX;
+        double sum = 0;
+        bool ok = false;
+        int dimension = Dimension;
+        NormalType *data = GetData<NormalType>(NormalCube); 
+        for (int i = 0; i < dimension; i++)
+        {
+            double factor = self_reference ? gray_scal_weight[(int)(data[i])] : gray_scal_weight[(int)(vector[i])];
+            ok = true;
+            sum += factor * (data[i] - vector[i]) * (data[i] - vector[i]);
+        }
+        if (ok)
+            return sum;
+        return DBL_MAX;
+    }
+
+    double GetEuclideanDistanceConsideringShadow(const NormalType *vector, bool self_reference, const ShadowType *shadow, double threhold, 
+        const double *gray_scal_weight)
+    {
+        if (vector == nullptr)
+            return DBL_MAX;
+        double sum = 0;
+        bool ok = false;
+        int dimension = Dimension;
+        for (int i = 0; i < dimension; i++)
+        {
+            if (abs(shadow[i]) > threhold)
+                continue;
+            const NormalType *data = GetData<NormalType>(NormalCube); 
+            double factor = self_reference ? gray_scal_weight[(int)(data[i])] : gray_scal_weight[(int)(vector[i])];
+            ok = true;
+            sum += factor * (data[i] - vector[i]) * (data[i] - vector[i]);
+        }
+        if (ok)
+            return sum;
+        return DBL_MAX;
+    }
+
+
     double GetManhatonDistance(const NormalType *vector, bool self_reference, const double *gray_scal_weight)
     {
         if (vector == nullptr)

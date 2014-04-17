@@ -249,7 +249,7 @@ private:
                 PixelInfo &ij3 = Pixels_[(i + 1) * w + j + 1];
                 PixelInfo &ij4 = Pixels_[i * w + j + 1];
 
-                if (SkipDarkPixel_ && (ij1.DarkPixel() || ij2.DarkPixel() || ij3.DarkPixel() || ij4.DarkPixel()))
+                if (SkipDarkPixel_ && (ij1.DarkPixel() && ij2.DarkPixel() && ij3.DarkPixel() && ij4.DarkPixel()))
                     continue;
                 glColor3d(0.2, 0.8, 0.2);
                 glBegin(GL_QUADS);
@@ -343,7 +343,7 @@ private:
                 PixelInfo &ij3 = Pixels_[(i + 1) * w + j + 1];
                 PixelInfo &ij4 = Pixels_[i * w + j + 1];
 
-                if (SkipDarkPixel_ && (ij1.DarkPixel() || ij2.DarkPixel() || ij3.DarkPixel() || ij4.DarkPixel()))
+                if (SkipDarkPixel_ && (ij1.DarkPixel() && ij2.DarkPixel() && ij3.DarkPixel() && ij4.DarkPixel()))
                     continue;
                 glBegin(GL_QUADS);
                 glNormal3d(ij1.Normal.X, ij1.Normal.Y, ij1.Normal.Z);
@@ -393,7 +393,7 @@ private:
                 PixelInfo &ij3 = Pixels_[(i + 1) * w + j + 1];
                 PixelInfo &ij4 = Pixels_[i * w + j + 1];
 
-                if (SkipDarkPixel_ && (ij1.DarkPixel() || ij2.DarkPixel() || ij3.DarkPixel() || ij4.DarkPixel()))
+                if (SkipDarkPixel_ && (ij1.DarkPixel() && ij2.DarkPixel() && ij3.DarkPixel() && ij4.DarkPixel()))
                     continue;
                 glBegin(GL_QUADS);
                 glNormal3d(ZScaleFactor_ * ij1.ActualNormal.X, ZScaleFactor_ * ij1.ActualNormal.Y, ij1.ActualNormal.Z);

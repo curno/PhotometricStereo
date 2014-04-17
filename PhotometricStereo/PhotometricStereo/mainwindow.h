@@ -28,6 +28,7 @@ public:
 
 private slots:
     void On_houghCircleButton_clicked();
+    void On_pushButtonShowObject_clicked();
     void On_previousButton_clicked();
     void On_nextButton_clicked();
     void UpdateLabelIndex();

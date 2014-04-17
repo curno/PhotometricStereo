@@ -3,7 +3,7 @@
 #include "PSModel.h"
 
 
-void PSModel::HoughCircle()
+bool PSModel::HoughCircle()
 {
     int c = ImageData.NormalCube->C;
     vector<IplImage *> copy(c, nullptr);
@@ -31,16 +31,95 @@ void PSModel::HoughCircle()
     cvConvertScale(img_sum, img_sum_ava, 1.0 / c);
     cvReleaseImage(&img_sum);
     auto storage = cvCreateMemStorage(0);
-    auto *seq = cvHoughCircles(img_sum_ava, storage, CV_HOUGH_GRADIENT, 2, image->width / 5.0, 300, 100, 60, 120);
+    auto *seq = cvHoughCircles(img_sum_ava, storage, CV_HOUGH_GRADIENT, 3, image->width/2.0, 100, 100, 65, 80);
     for (auto i = copy.begin(); i!= copy.end(); ++i)
         cvReleaseImage(&(*i));
 
-    float *p = (float *)cvGetSeqElem(seq, 0);
-    Configuration.ObjectLoadingCircle.X = p[0];
-    Configuration.ObjectLoadingCircle.Y = p[1];
-    Configuration.ObjectLoadingCircle.Z = p[2];
-    cvReleaseMemStorage(&storage);
+    if (seq->total > 0)
+    {
+        float *p = (float *)cvGetSeqElem(seq, seq->total - 1);
+        Configuration.ObjectLoadingCircle.X = p[0];
+        Configuration.ObjectLoadingCircle.Y = p[1];
+        Configuration.ObjectLoadingCircle.Z = p[2];
+        cvReleaseMemStorage(&storage);
+        return true;
+    }
+    return false;
 }
+
+bool PSModel::DetectObject()
+{
+    int width = ImageData.NormalCube->M;
+    int height = ImageData.NormalCube->N;
+
+    // get connected pixel from loading circle
+    vector<vector<bool>> flags(height, vector<bool>(width, false));
+    std::queue<PixelIndex> current;
+    current.push(PixelIndex(Configuration.ObjectLoadingCircle.X, Configuration.ObjectLoadingCircle.Y));
+    while (!current.empty())
+    {
+        auto p = current.front();
+        current.pop();
+        PixelInfo pi;
+        #define CHECK_AND_PUSH(x, y) \
+            pi = ImageData.CreatePixelInfo(x, y); \
+            if (!pi.IsInvalid && !flags[y][x] && !pi.DarkPixel()) \
+            { \
+                flags[y][x] = true; \
+                current.push(pi.Index); \
+            }
+
+        CHECK_AND_PUSH(p.X - 1, p.Y)
+        CHECK_AND_PUSH(p.X + 1, p.Y)
+        CHECK_AND_PUSH(p.X, p.Y - 1)
+        CHECK_AND_PUSH(p.X, p.Y + 1)
+        CHECK_AND_PUSH(p.X - 1, p.Y - 1)
+        CHECK_AND_PUSH(p.X + 1, p.Y + 1)
+        CHECK_AND_PUSH(p.X - 1, p.Y - 1)
+        CHECK_AND_PUSH(p.X + 1, p.Y + 1)
+        #undef CHECK_AND_PUSH
+    }
+
+    QRect rect;
+    bool first = false;
+    QRect circle(Configuration.ObjectLoadingCircle.X - Configuration.ObjectLoadingCircle.Z,
+        Configuration.ObjectLoadingCircle.Y - Configuration.ObjectLoadingCircle.Z, 
+        Configuration.ObjectLoadingCircle.Z, Configuration.ObjectLoadingCircle.Z );
+
+
+    for (int h = 0; h < height; ++h)
+        for (int w = 0; w < width; ++w)
+        {
+            if (flags[h][w])
+                continue;
+            PixelInfo pi = ImageData.CreatePixelInfo(w, h);
+            if (pi.DarkPixel())
+                continue;
+            if (!first)
+            {
+                first = true;
+                rect = QRect(w, h, 0, 0);
+            }
+            else
+            {
+                rect.setLeft(min(w, rect.left()));
+                rect.setRight(max(w, rect.right()));
+                rect.setBottom(max(h, rect.bottom()));
+                rect.setTop(min(h, rect.top()));
+            }
+        }
+
+        if (first)
+        {
+            QPoint center = rect.center();
+            rect.setSize(QSize(rect.width() * 1.1, rect.height() * 1.1));
+            rect.moveCenter(center);
+            Configuration.ObjectLoadingRegion = rect;
+            return true;
+        }
+        return false;
+}
+
 
 double PSModel::ComputeAverageError()
 {
@@ -1057,3 +1136,4 @@ pair<QImage, PixelInfoSet> PSModel::GetReconstructDifference()
     return std::make_pair(bmp, retval);
 
 }
+

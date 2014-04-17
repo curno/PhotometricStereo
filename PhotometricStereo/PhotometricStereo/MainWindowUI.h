@@ -39,6 +39,7 @@ public:
     QPushButton *pushButtonGo;
     QPushButton *pushButtonLoadDepthView;
     QPushButton *pushButtonHoughCircle;
+    QPushButton *pushButtonShowObject;
     QPushButton *pushButtonPlotCircle;
     QComboBox *comboBoxShadowDetection; 
     QPushButton *pushButtonDetectShadow;
@@ -176,6 +177,9 @@ public:
 
         pushButtonHoughCircle = new QPushButton(dockWidgetContents_5);
         verticalLayout->addWidget(pushButtonHoughCircle);
+
+        pushButtonShowObject = new QPushButton(dockWidgetContents_5);
+        verticalLayout->addWidget(pushButtonShowObject);
 
         pushButtonPlotCircle = new QPushButton(dockWidgetContents_5);
         pushButtonPlotCircle->setCheckable(true);
@@ -345,6 +349,7 @@ public:
 
         LogicWidgets_.push_back(pushButtonGo);
         LogicWidgets_.push_back(pushButtonHoughCircle);
+        LogicWidgets_.push_back(pushButtonShowObject);
         LogicWidgets_.push_back(pushButtonPlotCircle);
         LogicWidgets_.push_back(pushButtonDetectShadow);
         LogicWidgets_.push_back(comboBoxShadowDetection);
@@ -376,6 +381,7 @@ public:
         checkBoxCuda->setText(QApplication::translate("MainWindowClass", "CUDA", 0));
         pushButtonLoadDepthView->setText(QApplication::translate("MainWindowClass", "Load .dvf", 0));
         pushButtonHoughCircle->setText(QApplication::translate("MainWindowClass", "Hough Circle", 0));
+        pushButtonShowObject->setText(QApplication::translate("MainWindowClass", "Detect Object", 0));
         pushButtonPlotCircle->setText(QApplication::translate("MainWindowClass", "Plot Circle", 0));
         pushButtonDetectShadow->setText(QApplication::translate("MainWindowClass", "Detect Shadow", 0));
         pushButtonRelightning->setText(QApplication::translate("MainWindowClass", "Relighting", 0));

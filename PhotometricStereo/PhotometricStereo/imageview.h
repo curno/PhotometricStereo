@@ -126,12 +126,6 @@ public:
         virtual void paintEvent(ImageView *owner) override
         {
             QPainter painter(owner);
-            painter.setPen(Qt::green);
-            int x = owner->RelightingStart.x() < owner->RelightingEnd.x() ? owner->RelightingStart.x() : owner->RelightingEnd.x();
-            int y = owner->RelightingStart.y() < owner->RelightingEnd.y() ? owner->RelightingStart.y() : owner->RelightingEnd.y();
-            int w = qAbs(owner->RelightingEnd.x() - owner->RelightingStart.x());
-            int h = qAbs(owner->RelightingEnd.y() - owner->RelightingStart.y());
-            painter.drawRect(QRect(x, y, w, h));
             painter.setPen(Qt::NoPen);
             painter.setBrush(QBrush(Qt::green));
             painter.drawRect(QRect(owner->RelightingStart.x() - Radius, owner->RelightingStart.y() - Radius, 2 * Radius, 2 * Radius));
@@ -230,7 +224,7 @@ public:
         virtual void paintEvent(ImageView *owner) override
         {
             QPainter painter(owner);
-            painter.setPen(QPen(QBrush(Qt::darkYellow), 2.5));
+            painter.setPen(QPen(QBrush(Qt::yellow), 2.5));
             if (!owner->PlotTargetCircleCenter.isNull() && !owner->PlotTargetCircleRadius.isNull())
             {
                 CircleType c = owner->GetPlotTargetCircle();
@@ -285,7 +279,7 @@ public:
         virtual void paintEvent(ImageView *owner) override
         {
             QPainter painter(owner);
-            painter.setPen(QPen(QBrush(Qt::darkYellow), 2.5));
+            painter.setPen(QPen(QBrush(Qt::yellow), 2.5));
             
             painter.drawRect(owner->PlotTargetCylinder);
 
@@ -334,7 +328,7 @@ public:
         virtual void paintEvent(ImageView *owner) override
         {
             QPainter painter(owner);
-            painter.setPen(QPen(QBrush(Qt::darkYellow), 2.5));
+            painter.setPen(QPen(QBrush(Qt::yellow), 2.5));
 
             painter.drawLine(owner->PlotTargetConeP0, owner->PlotTargetConeP1);
             painter.drawLine(owner->PlotTargetConeP1, QPoint(2 * owner->PlotTargetConeP0.x() - owner->PlotTargetConeP1.x(), owner->PlotTargetConeP1.y()));
@@ -405,7 +399,7 @@ public:
     CubeType CurrentGroup;
     MainWindow *UI;
     PSModel *Model;
-private:
+public:
     vector<State *> CurrentStates;
     QPoint LocationToCheck;
     QPoint LocationResponding;
@@ -477,6 +471,13 @@ protected:
             auto c = GetPlotCircle();
             painter.drawEllipse(QPoint(c.X, c.Y), 
                 (int)c.Z, (int)c.Z);
+
+            painter.setPen(Qt::green);
+            int x = RelightingStart.x() < RelightingEnd.x() ? RelightingStart.x() : RelightingEnd.x();
+            int y = RelightingStart.y() < RelightingEnd.y() ? RelightingStart.y() : RelightingEnd.y();
+            int w = qAbs(RelightingEnd.x() - RelightingStart.x());
+            int h = qAbs(RelightingEnd.y() - RelightingStart.y());
+            painter.drawRect(QRect(x, y, w, h));
         }
 
         Q_FOREACH (State *state, CurrentStates)

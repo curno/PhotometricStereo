@@ -39,8 +39,8 @@ public:
             return nullptr;
         return g->GetQImage(index);
     }
-    void HoughCircle();
-
+    bool HoughCircle();
+    bool DetectObject();
     PixelIndex GetNearestPixelPosition(int x, int y)
     {
         PixelInfo &p = GetNeareastPixel(x, y);

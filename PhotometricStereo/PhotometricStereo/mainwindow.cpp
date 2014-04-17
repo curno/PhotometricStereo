@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     LoadModel("");
 
     connect(ui.pushButtonHoughCircle, &QPushButton::clicked, this, &MainWindow::On_houghCircleButton_clicked);
+    connect(ui.pushButtonShowObject, &QPushButton::clicked, this, &MainWindow::On_pushButtonShowObject_clicked);
     connect(ui.pushButtonRelightning, &QPushButton::clicked, this, &MainWindow::On_relightningButton_clicked);
     connect(ui.pushButtonSmoothNormal, &QPushButton::clicked, this, &MainWindow::On_pushButtonSmoothNormal_clicked);
     connect(ui.pushBUttonSmoothBorderNormal, &QPushButton::clicked, this, &MainWindow::On_pushButtonSmoothBorderNormal_clicked);
@@ -78,10 +79,33 @@ void MainWindow::On_houghCircleButton_clicked()
 {
     if (Model != nullptr)
     {
-        Model->HoughCircle();
+        if (Model->HoughCircle())
+        {
+            ui.imageView->PlotCircleCenter.setX(Model->Configuration.ObjectLoadingCircle.X);
+            ui.imageView->PlotCircleCenter.setY(Model->Configuration.ObjectLoadingCircle.Y);
+            ui.imageView->PlotCircleRadius.setX(Model->Configuration.ObjectLoadingCircle.X);
+            ui.imageView->PlotCircleRadius.setY(Model->Configuration.ObjectLoadingCircle.Y + Model->Configuration.ObjectLoadingCircle.Z);
+        }
     }
     ui.imageView->update();
 }
+
+
+void MainWindow::On_pushButtonShowObject_clicked()
+{
+    if (Model != nullptr)
+    {
+        if (Model->DetectObject())
+        {
+            ui.imageView->RelightingStart.setX(Model->Configuration.ObjectLoadingRegion.left());
+            ui.imageView->RelightingStart.setY(Model->Configuration.ObjectLoadingRegion.top());
+            ui.imageView->RelightingEnd.setX(Model->Configuration.ObjectLoadingRegion.right());
+            ui.imageView->RelightingEnd.setY(Model->Configuration.ObjectLoadingRegion.bottom());
+        }
+    }
+    ui.imageView->update();
+}
+
 void MainWindow::On_previousButton_clicked()
 {
     if (Model != nullptr)
