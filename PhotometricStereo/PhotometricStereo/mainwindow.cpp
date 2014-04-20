@@ -227,6 +227,7 @@ void MainWindow::On_pushButtonPlotCircle(bool checked)
     else
     {
         ui.imageView->SetCurrentState(ImageView::NoneState::Instance());
+        Model->Configuration.ObjectLoadingCircle = ui.imageView->GetPlotCircle();
         ui.imageView->update();
     }
 }

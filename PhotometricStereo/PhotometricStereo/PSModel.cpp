@@ -55,38 +55,48 @@ bool PSModel::DetectObject()
     // get connected pixel from loading circle
     vector<vector<bool>> flags(height, vector<bool>(width, false));
     std::queue<PixelIndex> current;
-    current.push(PixelIndex(Configuration.ObjectLoadingCircle.X, Configuration.ObjectLoadingCircle.Y));
-    while (!current.empty())
+    for (int h = 0; h < height; ++h)
     {
-        auto p = current.front();
-        current.pop();
-        PixelInfo pi;
-        #define CHECK_AND_PUSH(x, y) \
-            pi = ImageData.CreatePixelInfo(x, y); \
-            if (!pi.IsInvalid && !flags[y][x] && !pi.DarkPixel()) \
-            { \
-                flags[y][x] = true; \
-                current.push(pi.Index); \
-            }
+        for (int w = 0; w < width; ++w)
+        {
+            if (flags[h][w])
+                continue;
+            if ((h - Configuration.ObjectLoadingCircle.Y) * (h - Configuration.ObjectLoadingCircle.Y) + 
+                (w - Configuration.ObjectLoadingCircle.X) * (w - Configuration.ObjectLoadingCircle.X) <= Configuration.ObjectLoadingCircle.Z * Configuration.ObjectLoadingCircle.Z)
+            {
+                flags[h][w] = true;
+                current.push(PixelIndex(w, h));
+                while (!current.empty())
+                {
+                    auto p = current.front();
+                    current.pop();
+                    PixelInfo pi;
+                    #define CHECK_AND_PUSH(x, y) \
+                        pi = ImageData.CreatePixelInfo(x, y); \
+                        if (!pi.IsInvalid && !flags[y][x] && !pi.DarkPixel()) \
+                                        { \
+                                        flags[y][x] = true; \
+                                        current.push(pi.Index); \
+                                        }
 
-        CHECK_AND_PUSH(p.X - 1, p.Y)
-        CHECK_AND_PUSH(p.X + 1, p.Y)
-        CHECK_AND_PUSH(p.X, p.Y - 1)
-        CHECK_AND_PUSH(p.X, p.Y + 1)
-        CHECK_AND_PUSH(p.X - 1, p.Y - 1)
-        CHECK_AND_PUSH(p.X + 1, p.Y + 1)
-        CHECK_AND_PUSH(p.X - 1, p.Y - 1)
-        CHECK_AND_PUSH(p.X + 1, p.Y + 1)
-        #undef CHECK_AND_PUSH
+                    CHECK_AND_PUSH(p.X - 1, p.Y)
+                    CHECK_AND_PUSH(p.X + 1, p.Y)
+                    CHECK_AND_PUSH(p.X, p.Y - 1)
+                    CHECK_AND_PUSH(p.X, p.Y + 1)
+                    CHECK_AND_PUSH(p.X - 1, p.Y - 1)
+                    CHECK_AND_PUSH(p.X + 1, p.Y + 1)
+                    CHECK_AND_PUSH(p.X - 1, p.Y - 1)
+                    CHECK_AND_PUSH(p.X + 1, p.Y + 1)
+                    #undef CHECK_AND_PUSH
+                }
+            }
+        }
     }
+    
 
     QRect rect;
     bool first = false;
-    QRect circle(Configuration.ObjectLoadingCircle.X - Configuration.ObjectLoadingCircle.Z,
-        Configuration.ObjectLoadingCircle.Y - Configuration.ObjectLoadingCircle.Z, 
-        Configuration.ObjectLoadingCircle.Z, Configuration.ObjectLoadingCircle.Z );
-
-
+    
     for (int h = 0; h < height; ++h)
         for (int w = 0; w < width; ++w)
         {
@@ -699,10 +709,13 @@ void PSModel::LoadObjectPixelNormals_CUDA()
 
     if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Manhaton_Method)
         CudaGetNearestPixelIndex(ptr_ball_pixel, ptr_object_pixel, ptr_object_shadow, ptr_gray_scale_weight, 
-        ptr_result, ball_pixel_count, h, w, dimension, 20, Configuration.ShadowThreshold, true);
-    else
+        ptr_result, ball_pixel_count, h, w, dimension, 20, Configuration.ShadowThreshold, 0);
+    else if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Angle_Method)
         CudaGetNearestPixelIndex(ptr_ball_pixel, ptr_object_pixel, ptr_object_shadow, ptr_gray_scale_weight, 
-        ptr_result, ball_pixel_count, h, w, dimension, 20, Configuration.ShadowThreshold, false);
+        ptr_result, ball_pixel_count, h, w, dimension, 20, Configuration.ShadowThreshold, 2);
+    else if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Euclidiean_Method)
+        CudaGetNearestPixelIndex(ptr_ball_pixel, ptr_object_pixel, ptr_object_shadow, ptr_gray_scale_weight, 
+        ptr_result, ball_pixel_count, h, w, dimension, 20, Configuration.ShadowThreshold, 1);
 
     for (int i = 0; i < ImageData.ObjectPixels->size(); ++i)
     {
@@ -1001,6 +1014,7 @@ PSModel * PSModel::CreateModel(const string &dir)
     auto *retval = new PSModel();
     retval->Configuration.ImageSetSource = dir;
     retval->ImageData.NormalCube = ImageDataCubeFactory::CreateNormalCubeFromFiles(dir);
+    retval->Configuration.ImageCount = retval->ImageData.NormalCube->GetC();
     return retval;
 }
 

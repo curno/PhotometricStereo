@@ -40,18 +40,23 @@ public:
     void SaveImage(const QString &file_or_dir_name, bool only_self = true)
     {
         if (only_self)
+        {
             this->grabFrameBuffer().save(file_or_dir_name);
+            ofstream of(FromQStringToStdString(file_or_dir_name) + ".html");
+            of << Description_ << endl;
+            of.close();
+        }
         else
         {
             QDir dir(file_or_dir_name);
 
             if (ConnectedViews_ == nullptr)
-                SaveImage(GetNewFileName("", ".bmp", dir), true);
+                SaveImage(GetNewFileName("", ".png", dir), true);
             else
             {
                 int index = 0;
                 for each (PixelInfoSetView *view in *ConnectedViews_)
-                    view->SaveImage(GetNewFileName("", ".bmp", dir), true);
+                    view->SaveImage(GetNewFileName("", ".png", dir), true);
             }
         }
     }

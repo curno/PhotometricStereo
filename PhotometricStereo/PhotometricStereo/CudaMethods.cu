@@ -53,6 +53,57 @@ __global__ void GetNearestPixelIndexKernel_Manhaton(double *ball_pixel, double *
     return;
 }
 
+__global__ void GetNearestPixelIndexKernel_Euclidean(double *ball_pixel, double *object, double *shadow, 
+                                           double *weight, int *result, int ball_pixel_count, int dimension,
+                                           int dark_threoshold, int shadow_threoshold, int start, int end)
+{
+    int index = start + blockDim.x * blockIdx.x + threadIdx.x;
+    if (index >= end)
+        return;
+    object += (index * dimension);
+    shadow += (index * dimension);
+
+    bool dark = true;
+    for (int i = 0; i < dimension; ++i)
+        if (object[i] > dark_threoshold)
+        {
+            dark = false;
+            break;
+        }
+    if (dark)
+    {
+        result[index] = -1;
+        return;
+    }
+
+    double minimun_dis = 1.0e300;
+    double minimum_idx = -1;
+    for (int i = 0; i < ball_pixel_count; ++i)
+    {
+        double dis = 0;
+        bool shadow_flag = true;
+        for (int j = 0; j < dimension; ++j)
+        {
+            if ((shadow[j] > 0 ? shadow[j] : -shadow[j]) > shadow_threoshold)
+                continue;
+            shadow_flag = false;
+            dis += (object[j] - ball_pixel[j]) * (object[j] - ball_pixel[j]) * weight[static_cast<int>(object[j])];
+        }
+        if (!shadow_flag)
+        {
+            if (minimun_dis > dis)
+            {
+                minimun_dis = dis;
+                minimum_idx = i;
+            }
+        }
+        ball_pixel += dimension;
+    }
+    result[index] = minimum_idx;
+    return;
+}
+
+
 __global__ void GetNearestPixelIndexKernel_Angle(double *ball_pixel, double *object, double *shadow, 
                                            int *result, int ball_pixel_count, int dimension,
                                            int dark_threoshold, int shadow_threoshold, int start, int end)
@@ -146,6 +197,47 @@ __global__ void GetNearestPixelIndexKernel_Manhaton_NoShadow(double *ball_pixel,
     return;
 }
 
+__global__ void GetNearestPixelIndexKernel_Euclidean_NoShadow(double *ball_pixel, double *object, 
+                                           double *weight, int *result, int ball_pixel_count, int dimension,
+                                           int dark_threoshold, int start, int end)
+{
+    int index = start + blockDim.x * blockIdx.x + threadIdx.x;
+    if (index >= end)
+        return;
+    object += (index * dimension);
+
+    bool dark = true;
+    for (int i = 0; i < dimension; ++i)
+        if (object[i] > dark_threoshold)
+        {
+            dark = false;
+            break;
+        }
+    if (dark)
+    {
+        result[index] = -1;
+        return;
+    }
+
+    double minimun_dis = 1.0e300;
+    double minimum_idx = -1;
+    for (int i = 0; i < ball_pixel_count; ++i)
+    {
+        double dis = 0;
+        for (int j = 0; j < dimension; ++j)
+            dis += (object[j] - ball_pixel[j]) * (object[j] - ball_pixel[j]) * weight[static_cast<int>(object[j])];
+        if (minimun_dis > dis)
+        {
+            minimun_dis = dis;
+            minimum_idx = i;
+        }
+        ball_pixel += dimension;
+    }
+    result[index] = minimum_idx;
+    return;
+}
+
+
 __global__ void GetNearestPixelIndexKernel_Angle_NoShadow(double *ball_pixel, double *object, 
                                            int *result, int ball_pixel_count, int dimension,
                                            int dark_threoshold, int start, int end)
@@ -193,7 +285,7 @@ __global__ void GetNearestPixelIndexKernel_Angle_NoShadow(double *ball_pixel, do
 
 cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double *shadow, 
                                  double *weight, int *result, int ball_pixel_count, int h, int w, int dimension,
-                                 int dark_threoshold, int shadow_threoshold, bool manhaton)
+                                 int dark_threoshold, int shadow_threoshold, int method)
 {
     typedef double LightningType;
     cudaError_t cuda_status;
@@ -269,7 +361,7 @@ cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double 
     {
         int start = i * per_batch_count;
         int end = (i + 1) * per_batch_count > object_size ? object_size : (i + 1) * per_batch_count;
-        if (manhaton && shadow != nullptr)
+        if (method == 0 && shadow != nullptr)
             GetNearestPixelIndexKernel_Manhaton<<<blocks_num, threads_num>>>(ptr_ball_pixel,
                                                         ptr_object_pixel,
                                                         ptr_object_shadow,
@@ -282,7 +374,7 @@ cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double 
                                                         start,
                                                         end                                                        
                                                         );
-        else if (!manhaton && shadow != nullptr)
+        else if (method == 2 && shadow != nullptr)
             GetNearestPixelIndexKernel_Angle<<<blocks_num, threads_num>>>(ptr_ball_pixel,
                                                         ptr_object_pixel,
                                                         ptr_object_shadow,
@@ -294,7 +386,20 @@ cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double 
                                                         start,
                                                         end   
                                                         );
-        else if (manhaton && shadow == nullptr)
+        else if (method == 1 && shadow != nullptr)
+            GetNearestPixelIndexKernel_Euclidean<<<blocks_num, threads_num>>>(ptr_ball_pixel,
+                                                        ptr_object_pixel,
+                                                        ptr_object_shadow,
+                                                        ptr_gray_scale_weight,
+                                                        ptr_result, 
+                                                        ball_pixel_count, 
+                                                        dimension,
+                                                        dark_threoshold,
+                                                        shadow_threoshold,
+                                                        start,
+                                                        end                                                        
+                                                        );
+        else if (method == 0 && shadow == nullptr)
             GetNearestPixelIndexKernel_Manhaton_NoShadow<<<blocks_num, threads_num>>>(ptr_ball_pixel, 
                                                          ptr_object_pixel,
                                                          ptr_gray_scale_weight, 
@@ -305,7 +410,7 @@ cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double 
                                                          start,
                                                          end
                                                          );
-        else if (!manhaton && shadow == nullptr)
+        else if (method == 2 && shadow == nullptr)
             GetNearestPixelIndexKernel_Angle_NoShadow<<<blocks_num, threads_num>>>(ptr_ball_pixel,
                                                       ptr_object_pixel,
                                                       ptr_result,
@@ -315,6 +420,17 @@ cudaError_t CudaGetNearestPixelIndex(double *ball_pixel, double *object, double 
                                                       start,
                                                       end
                                                       );
+        else if (method == 1 && shadow == nullptr)
+            GetNearestPixelIndexKernel_Euclidean_NoShadow<<<blocks_num, threads_num>>>(ptr_ball_pixel, 
+                                                         ptr_object_pixel,
+                                                         ptr_gray_scale_weight, 
+                                                         ptr_result,
+                                                         ball_pixel_count,
+                                                         dimension, 
+                                                         dark_threoshold, 
+                                                         start,
+                                                         end
+                                                         );
 
 
                                                          

@@ -88,6 +88,8 @@ public:
                 distance = ImageData.BallPixels[i].GetManhatonDistance(vector, false, GrayScaleWeight);
             else if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Angle_Method)
                 distance = ImageData.BallPixels[i].GetAngleDistance(vector);
+            else if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Euclidiean_Method)
+                distance = ImageData.BallPixels[i].GetEuclideanDistance(vector, false, GrayScaleWeight);
             if (distance < min)
             {
                 min = distance;
@@ -112,6 +114,8 @@ public:
                 distance = ImageData.BallPixels[i].GetManhationDistanceConsideringShadow(vector, false, shadow, therdhold, scale_weight);
             else if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Angle_Method)
                 distance = ImageData.BallPixels[i].GetAngleDistanceConsideringShadow(vector, shadow, therdhold);
+            else if (Configuration.PixelDistance == ModelConfiguration::PixelDistanceMethod::Euclidiean_Method)
+                distance = ImageData.BallPixels[i].GetEuclideanDistanceConsideringShadow(vector, false, shadow, therdhold, scale_weight);
             if (distance < min)
             {
                 min = distance;

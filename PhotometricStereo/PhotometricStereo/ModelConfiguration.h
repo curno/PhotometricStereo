@@ -9,7 +9,7 @@ class ModelConfiguration
 {
 public:
     enum class ShadowDetectionMethod { Ignore_Method, ThreeNoShadow_Method, PerPixel_Method, /* count */ ShadowDetectionMethod_Count };
-    enum class PixelDistanceMethod { Manhaton_Method, Angle_Method, /* count */ PixelDistanceMethod_Count };
+    enum class PixelDistanceMethod { Manhaton_Method, Euclidiean_Method, Angle_Method, /* count */ PixelDistanceMethod_Count };
     enum class ShadowUseMethod { Ignore_Shadow, Remove_Shadow, /* count */ ShadowUse_Count };
     
     string ImageSetSource;
@@ -23,6 +23,7 @@ public:
     int NormalSmoothing;
     int BorderNormalSmoothing;
     int ShadowThreshold;
+    int ImageCount;
 
     int ElapsedMiliSeconds;
     ModelConfiguration() : UsingCuda(false), ShadowDetection(ShadowDetectionMethod::Ignore_Method), PixelDistance(PixelDistanceMethod::Manhaton_Method), NormalSmoothing(0), BorderNormalSmoothing(0), ShadowThreshold(20), ElapsedMiliSeconds(0) { }
@@ -36,6 +37,7 @@ public:
         string hline = "<hr/>";
         string color = "rgb(255, 201, 14)";
         oss << "Image Set: " << ImageSetSource << endl;
+        oss << "Image Count:" << ImageCount << endl;
         oss << "Shadow Detection: " << "<span style=\"color:" << color <<";\">" << ShadowDetetionMethodStr(ShadowDetection) << "</span>" << endl;
         oss << "Using Cuda: " << "<span style=\"color:" << color <<";\">" << (UsingCuda ? "Yes" : "No") << "</span>" << endl;
         if (ShadowDetection != ShadowDetectionMethod::Ignore_Method)
@@ -55,6 +57,8 @@ public:
         }
         if (ElapsedMiliSeconds != 0)
         {
+            oss << "Object Pixel:" << ObjectLoadingRegion.width() * ObjectLoadingRegion.height() << endl;
+            oss << "Calculation Amount:" << ObjectLoadingRegion.width() * ObjectLoadingRegion.height() * ObjectLoadingCircle.Z * ObjectLoadingCircle.Z * PI * ImageCount << endl;
             oss << "Elapsed Time: " << "<span style=\"color:" << color << ";\">" << ElapsedMiliSeconds << " ms" << "</span>"  << endl;
         }
         return oss.str();
@@ -82,6 +86,8 @@ public:
             return "Manhaton";
         case PixelDistanceMethod::Angle_Method:
             return "Angle";
+        case PixelDistanceMethod::Euclidiean_Method:
+            return "Euclidiean";
         default:
             return "";
         }
