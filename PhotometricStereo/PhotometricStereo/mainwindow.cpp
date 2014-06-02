@@ -427,8 +427,9 @@ void MainWindow::On_pushButtonDetectShadow_clicked()
     if (Model != nullptr)
     {
         Model->Configuration.ShadowDetectionCircle = ui.imageView->GetPlotCircle();
-        Model->Configuration.ShadowDetectionCircle.Z /= 2;
-
+        Model->Configuration.ShadowDetectionCircle.Z /= 3;
+        if (Model->Configuration.UseMiddleThree)
+            Model->Configuration.ShadowDetectionCircle.Z /= 3;
         Model->Configuration.ShadowDetection = ModelConfiguration::ShadowDetectionMethod(ui.comboBoxShadowDetection->currentIndex());
         Model->CreateShadowRemovedImages();
 

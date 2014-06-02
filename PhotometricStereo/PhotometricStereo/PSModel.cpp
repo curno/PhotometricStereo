@@ -324,7 +324,7 @@ void PSModel::CreateShadowRemovedImagesPerPixelInternal()
 
         }
     }
-    ImageData.DifferenceCube = ImageDataCubeFactory::CreateNormalCubeFromCvImages<ImageDataCubeType<DifferenceCube>::Type>(images);
+    ImageData.DifferenceCube = ImageDataCubeFactory::CreateNormalCubeFromCvImages<ImageDataCubeType<DifferenceCube>::Type>(images, vector<QImage *>());
     CreateDifferenceShadowImages();
 }
 
@@ -359,7 +359,7 @@ void PSModel::CreateShadowRemovedImagesByThreeNoShadowInternal()
         cvMax(zero, image_add, image_add);
         images.push_back(image_add);
     }
-    ImageData.DifferenceCube = ImageDataCubeFactory::CreateNormalCubeFromCvImages<ImageDataCubeType<DifferenceCube>::Type>(images);
+    ImageData.DifferenceCube = ImageDataCubeFactory::CreateNormalCubeFromCvImages<ImageDataCubeType<DifferenceCube>::Type>(images, vector<QImage *>());
     CreateDifferenceShadowImages();
 }
 
@@ -384,7 +384,7 @@ void PSModel::CreateDifferenceShadowImages()
             qDebug(e.msg.c_str());
         }
     }
-    ImageData.ShadowCube = ImageDataCubeFactory::CreateNormalCubeFromCvImages<ImageDataCubeType<ShadowCube>::Type>(images);
+    ImageData.ShadowCube = ImageDataCubeFactory::CreateNormalCubeFromCvImages<ImageDataCubeType<ShadowCube>::Type>(images, vector<QImage *>());
 }
 
 void PSModel::CalcLigtningDirections(int sample_size /*= 3*/)
@@ -1057,6 +1057,7 @@ PSModel * PSModel::CreateModel(const string &dir)
     retval->Configuration.ImageSetSource = dir;
     retval->ImageData.NormalCube = ImageDataCubeFactory::CreateNormalCubeFromFiles(dir);
     retval->Configuration.ImageCount = retval->ImageData.NormalCube->GetC();
+    retval->Configuration.UseMiddleThree = Ugly(dir);
     return retval;
 }
 

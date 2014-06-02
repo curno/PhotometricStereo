@@ -363,5 +363,16 @@ private:
     };
     unordered_map<WeightToken, vec3, WeightTokenHasher> WeightsCache_;
 
+
+    static bool Ugly(const string &dir_name)
+    {
+        QDir dir(FromStdStringToQString(dir_name));
+        QFileInfoList list = dir.entryInfoList();
+        foreach (QFileInfo info, list)
+            if (info.completeBaseName().endsWith("H"))
+                return true;
+        return false;
+
+    }
 };
 

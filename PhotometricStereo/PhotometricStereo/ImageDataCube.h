@@ -44,8 +44,6 @@ struct ImageDataCubeBase abstract
             for(int i = 0; i < 256; i++) 
                 my_table.push_back(qRgb(i, i, i));
             q_image->setColorTable(my_table);
-            if (false)
-                q_image->save("D:\\1.bmp");
             QImageCache_[index] = q_image;
             CvImageForQImage_[index] = image;
         }
@@ -80,7 +78,7 @@ class ImageDataCubeFactory
 {
 public:
     template<typename CubeType>
-    static shared_ptr<ImageDataCube<CubeType>> CreateNormalCubeFromCvImages(vector<IplImage *> &images)
+    static shared_ptr<ImageDataCube<CubeType>> CreateNormalCubeFromCvImages(vector<IplImage *> &images, vector<QImage *> &qimages)
     {
         if (images.empty())
             return nullptr;
@@ -89,6 +87,8 @@ public:
         int c = images.size();
         ImageDataCube<CubeType> *retval = new ImageDataCube<CubeType>(m, n, c);
         retval->CvImageCache_.assign(images.begin(), images.end());
+        if (qimages.size() == images.size())
+            retval->QImageCache_.assign(qimages.begin(), qimages.end());
         retval->Cube_ = new CubeType[m * n * c];
         CubeType *current = static_cast<CubeType *>(retval->Cube_);
         for (int i = 0; i < n; ++i)
@@ -101,6 +101,7 @@ public:
     static shared_ptr<ImageDataCube<ImageDataCubeType<NormalCube>::Type>> CreateNormalCubeFromFiles(const string &dir_name)
     {
         vector<IplImage *> images;
+        vector<QImage *> qimages;
         QDir dir(FromStdStringToQString(dir_name));
         QFileInfoList list = dir.entryInfoList();
         foreach (QFileInfo info, list)
@@ -108,10 +109,17 @@ public:
             string s = FromQStringToStdString(info.absoluteFilePath());
             IplImage *image = cvLoadImage(s.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
             if (image != nullptr)
+            {
                 images.push_back(image);
+
+                    QImage *q_image = new QImage(image->width, image->height, QImage::Format_RGB32);
+                    if (q_image->load(info.absoluteFilePath()))
+                        qimages.push_back(q_image);
+                
+            }
         }
 
-        return CreateNormalCubeFromCvImages<ImageDataCubeType<NormalCube>::Type>(images);
+        return CreateNormalCubeFromCvImages<ImageDataCubeType<NormalCube>::Type>(images, qimages);
 
     }
 
