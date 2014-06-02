@@ -306,8 +306,10 @@ void MainWindow::On_pushButtonReconstructionDifference__clicked()
 {
     if (Model == nullptr)
         return;
-    double error = Model->ComputeAverageError();
-    QMessageBox::information(this, "Error", QString("The average error angle is %0 degree.").arg(QString::number(error * 180.0 / PI, 'g', 6)));
+    double max_error = 0;
+    double error = Model->ComputeAverageError(max_error);
+    QMessageBox::information(this, "Error", QString("The average error angle is %0 degree. %1 max").arg(QString::number(error * 180.0 / PI, 'g', 6))
+        .arg(QString::number(max_error * 180.0 / PI, 'g', 6)));
 
     PixelInfoSet pixels = Model->GetGroundTruth();
     

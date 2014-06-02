@@ -509,5 +509,5 @@ protected:
             state->mouseReleaseEvent(this, e);
     }
 private:
-    static const int PointSize = 2;
+    static const int PointSize = 3;
 };

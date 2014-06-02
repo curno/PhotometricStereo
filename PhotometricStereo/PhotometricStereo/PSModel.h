@@ -11,7 +11,8 @@ class MainWindow;
 class PSModel
 {
 public:
-
+    static const int MaxAngleErrorForColorIndex = 75;
+    static QColor GetAngleErrorColor(double angle);
 private:
     PSModel();
 
@@ -130,7 +131,7 @@ public:
     pair<QImage, PixelInfoSet> GetReconstructDifference();
 public:
 
-    double ComputeAverageError();
+    double ComputeAverageError(double &max);
 
     void LoadBallPixels();
 

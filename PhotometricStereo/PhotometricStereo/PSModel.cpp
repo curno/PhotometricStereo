@@ -131,12 +131,13 @@ bool PSModel::DetectObject()
 }
 
 
-double PSModel::ComputeAverageError()
+double PSModel::ComputeAverageError(double &max_value)
 {
     int object_count = ImageData.ObjectPixels->size();
     int target_count = ImageData.TargetObjectPixels->size();
     double angle_sum = 0;
     int total_pixel_count = 0;
+    max_value = 0;
     for (int i = 0; i < target_count; i++)
     {
         PixelInfo &ball = ImageData.TargetObjectPixels[i];
@@ -144,10 +145,12 @@ double PSModel::ComputeAverageError()
         for (int j = 0; j < object_count; j++)
         {
             PixelInfo &object = ImageData.ObjectPixels[j];
-            if (object.Index == ball.Index)
+            if (object.Index == ball.Index && !object.DarkPixel())
             {
                 found = true;
-                angle_sum += std::acos(max(-1.0, min(1.0, object.Normal * ball.Normal)));
+                double angle = std::acos(max(-1.0, min(1.0, object.Normal * ball.Normal)));
+                max_value = max(max_value, angle);
+                angle_sum += angle;
                 break;
             }
         }
@@ -622,7 +625,7 @@ void PSModel::InitGrayScaleWeight()
 {
     for (int i = 0; i < 256; i++)
     {
-        GrayScaleWeight[i] = 1 + 3 * std::cos(i / 510.0 * PI);
+        GrayScaleWeight[i] = 1 + 3 * std::cos((i) / 510.0 * PI);
     }
 }
 
@@ -868,6 +871,7 @@ void PSModel::SampleLightingVectors(double *samples, int *indices, int sample_si
 void PSModel::GetMiddleThreeIndex(NormalType *data, int dimension, int *ii)
 {
 
+
     ii[0] = 0;
     for (int i = 1; i < dimension; ++i)
     {
@@ -889,16 +893,16 @@ void PSModel::GetMiddleThreeIndex(NormalType *data, int dimension, int *ii)
     }
 
 
-    /*ScaleWithIndex<NormalType> *data_i = new ScaleWithIndex<NormalType>[dimension];
+   /* ScaleWithIndex<NormalType> *data_i = new ScaleWithIndex<NormalType>[dimension];
     for (int i = 0; i < dimension; ++i)
     {
         data_i[i].v = data[i];
         data_i[i].i = i;
     }
     partial_sort(data_i, data_i + dimension, data_i + dimension, [](const ScaleWithIndex<NormalType> &i1, const ScaleWithIndex<NormalType> &i2) { return i1.v > i2.v; });
-    ii[0] = data_i[dimension / 2 - 1].i;
-    ii[1] = data_i[dimension / 2].i;
-    ii[2] = data_i[dimension / 2 + 1].i;
+    ii[0] = data_i[dimension / 2].i;
+    ii[1] = data_i[dimension / 2 + 1].i;
+    ii[2] = data_i[dimension / 2 + 2].i;
     delete [] data_i;*/
 
     sort(ii, ii + 3);
@@ -1039,7 +1043,7 @@ PixelInfoSet PSModel::RectanglizePixelInfoSet(PixelInfoSet pixels, QRect region)
             p1.Index.Y = (region.y() + h);
             p1.Position.X = w;
             p1.Position.Y = h;
-            p1.SetImageData(nullptr);
+            p1.SetImageData(&ImageData);
 
             bool found = false;
             for each (const PixelInfo &pixel in pixel_array)
@@ -1133,12 +1137,15 @@ pair<QImage, PixelInfoSet> PSModel::GetReconstructDifference()
 
         pixels->push_back(pixel);
 
-        double dot = pixel1.Normal * pixel2.Normal;
-        dot = min(1.0, max(0.0, dot));
-        double angle = acos(dot);
-        int gray = 255 * angle * 2.0 / PI;
-        gray = min(255, gray);
-        bmp.setPixel(pixel1.Position.X, pixel2.Position.Y, QColor(gray, gray, gray).rgb());
+        double angle = 0;
+        if (!pixel1.DarkPixel() && !pixel2.DarkPixel())
+        {
+            double dot = pixel1.Normal * pixel2.Normal;
+            dot = min(1.0, max(0.0, dot));
+            angle = acos(dot);
+        }
+        QColor color = GetAngleErrorColor(angle / PI * 180);
+        bmp.setPixel(pixel1.Position.X, pixel2.Position.Y, color.rgb());
     }
 
     PixelInfoSet retval;
@@ -1149,5 +1156,45 @@ pair<QImage, PixelInfoSet> PSModel::GetReconstructDifference()
 
     return std::make_pair(bmp, retval);
 
+}
+
+
+
+namespace
+{
+    QColor GetColor(QColor c1, QColor c2, double ratio);
+    QColor GetColor(double ratio)
+    {
+        QColor colors[] = { QColor(0,0,180), QColor(0,255,255), 
+            QColor(100,255,0), QColor(255,255,0), QColor(255,0, 0), QColor(128,0,0)};
+
+        if (ratio <= 0.2)
+            return GetColor(colors[0], colors[1], ratio / 0.2);
+        else if (ratio <= 0.4)
+            return GetColor(colors[1], colors[2], (ratio - 0.2) / 0.2);
+        else if (ratio <= 0.6)
+            return GetColor(colors[2], colors[3], (ratio - 0.4) / 0.2);
+        else if (ratio <= 0.8)
+            return GetColor(colors[3], colors[4], (ratio - 0.6) / 0.2);
+        else 
+            return GetColor(colors[4], colors[5], (ratio - 0.8) / 0.2);
+    }
+
+    QColor GetColor(QColor c1, QColor c2, double ratio)
+    {
+        ratio = max(0, min(1, ratio));
+        double r, g, b;
+        r = c1.red() + (c2.red() - c1.red()) * ratio;
+        g = c1.green() + (c2.green() - c1.green()) * ratio;
+        b = c1.blue() + (c2.blue() - c1.blue()) * ratio;
+        r = max(0, min(255, r));
+        g = max(0, min(255, g));
+        b = max(0, min(255, b));
+        return QColor((int)r, (int)g, (int)b);
+    }
+}
+QColor PSModel::GetAngleErrorColor( double angle )
+{
+    return GetColor(angle / MaxAngleErrorForColorIndex);
 }
 

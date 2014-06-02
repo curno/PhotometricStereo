@@ -18,10 +18,16 @@ ImageView::~ImageView()
 void ImageView::CheckNormalState::paintEvent(ImageView *owner)
 {
     QPainter painter(owner);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+
     painter.setBrush(QBrush(Qt::green));
     painter.setPen(Qt::NoPen);
     painter.drawEllipse(owner->LocationToCheck, PointSize, PointSize);
+    painter.setBrush(QBrush(Qt::green));
     painter.drawEllipse(owner->LocationResponding, PointSize, PointSize);
+
+    painter.setBrush(QBrush(Qt::red));
+    painter.drawEllipse(owner->LastLocationToCheck, PointSize, PointSize);
 
     ImageView::RelightningState::Instance()->paintEvent(owner);
 }
@@ -34,6 +40,7 @@ void ImageView::CheckNormalState::mousePressEvent(ImageView *owner, QMouseEvent 
     }
     else if (e->buttons() & Qt::RightButton)
     {
+        owner->LastLocationToCheck = e->pos();
         auto m2 = owner->Model->ImageData.CreatePixelInfo(e->pos().x(), e->pos().y());
         auto m1 = owner->Model->ImageData.CreatePixelInfo(owner->LocationToCheck.x(), owner->LocationToCheck.y());
         owner->UI->AddVectorToVectorView(m2, 2);

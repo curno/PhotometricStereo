@@ -56,7 +56,7 @@ struct ImageDataCubeBase abstract
     {
         QDir dir(dir_name);
         for (int i = 0; i < C; ++i)
-            GetQImage(i)->save(dir.filePath(QString::number(i) + ".bmp"));
+            GetQImage(i)->save(dir.filePath(QString::number(i) + ".png"));
     }
 protected:
     vector<QImage *> QImageCache_;

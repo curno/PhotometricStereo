@@ -12,7 +12,7 @@ namespace ImagePreprocess
     {
         static void Main(string[] args)
         {
-            string input_folder_name = @"F:\新建文件夹\新建文件夹";
+            string input_folder_name = @"F:\2\";
             DirectoryInfo di = new DirectoryInfo(input_folder_name);
             foreach (DirectoryInfo sub_di in di.GetDirectories())
             {

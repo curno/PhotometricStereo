@@ -26,7 +26,7 @@ bool PixelInfo::DarkPixel() const
         auto *data = GetData<NormalType>(NormalCube);
         for (int i = 0; i < dimension; i++)
         {
-            if (data[i] > 15)
+            if (data[i] > 20)
                 dark = false;
         }
     }
@@ -79,6 +79,46 @@ bool PixelInfo::BoundaryPixel() const
     }
     Boundary_ = 1;
     return false;
+}
+
+double PixelInfo::GetManhatonDistance( const NormalType *vector, bool self_reference, const double *gray_scal_weight )
+{
+    if (vector == nullptr)
+        return DBL_MAX;
+    double sum = 0;
+    bool ok = false;
+    int dimension = Dimension;
+    NormalType *data = GetData<NormalType>(NormalCube); 
+    for (int i = 0; i < dimension; i++)
+    {
+        if (vector[i] < 70)
+            continue;
+        double factor = self_reference ? gray_scal_weight[(int)(data[i])] : gray_scal_weight[(int)(vector[i])];
+        ok = true;
+        sum += factor * ::std::abs(data[i] - vector[i]);
+    }
+    if (ok)
+        return sum;
+    return DBL_MAX;
+}
+
+double PixelInfo::GetEuclideanDistance( const NormalType *vector, bool self_reference, const double *gray_scal_weight )
+{
+    if (vector == nullptr)
+        return DBL_MAX;
+    double sum = 0;
+    bool ok = false;
+    int dimension = Dimension;
+    NormalType *data = GetData<NormalType>(NormalCube); 
+    for (int i = 0; i < dimension; i++)
+    {
+        double factor = self_reference ? gray_scal_weight[(int)(data[i])] : gray_scal_weight[(int)(vector[i])];
+        ok = true;
+        sum += factor * (data[i] - vector[i]) * (data[i] - vector[i]);
+    }
+    if (ok)
+        return sum;
+    return DBL_MAX;
 }
 
 // NOTE: these two persistent methods for PixelInfo only read and write the normal and position info to/from file.

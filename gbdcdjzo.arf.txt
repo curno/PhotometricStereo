@@ -1,0 +1,25 @@
+﻿commit before submitted to teacher & school.
+
+Signed-off-by: Curno <lyf.curno@gmail.com>
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   PhotometricStereo/PhotometricStereo/GeneratedFiles/qrc_Resource.cpp
+#	modified:   PhotometricStereo/PhotometricStereo/ImageDataCube.h
+#	modified:   PhotometricStereo/PhotometricStereo/PSModel.cpp
+#	modified:   PhotometricStereo/PhotometricStereo/PSModel.h
+#	modified:   PhotometricStereo/PhotometricStereo/PixelInfo.cpp
+#	modified:   PhotometricStereo/PhotometricStereo/PixelInfo.h
+#	modified:   PhotometricStereo/PhotometricStereo/imageview.cpp
+#	modified:   PhotometricStereo/PhotometricStereo/imageview.h
+#	modified:   PhotometricStereo/PhotometricStereo/mainwindow.cpp
+#	modified:   Tools/ImagePreprocess/ImagePreprocess/Program.cs
+#
+
