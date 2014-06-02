@@ -24,9 +24,10 @@ public:
     int BorderNormalSmoothing;
     int ShadowThreshold;
     int ImageCount;
+    bool UseMiddleThree;
 
     int ElapsedMiliSeconds;
-    ModelConfiguration() : UsingCuda(false), ShadowDetection(ShadowDetectionMethod::Ignore_Method), PixelDistance(PixelDistanceMethod::Manhaton_Method), NormalSmoothing(0), BorderNormalSmoothing(0), ShadowThreshold(20), ElapsedMiliSeconds(0) { }
+    ModelConfiguration() : UsingCuda(false), ShadowDetection(ShadowDetectionMethod::Ignore_Method), PixelDistance(PixelDistanceMethod::Manhaton_Method), NormalSmoothing(0), BorderNormalSmoothing(0), ShadowThreshold(20), ElapsedMiliSeconds(0), UseMiddleThree(false) { }
 
     string readonly(Description);
     string GetDescription() const

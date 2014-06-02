@@ -297,6 +297,9 @@ private:
     // This function can be accelerated by using logn + n algorithm. 
     // Don't know if necessary.
     static void GetMiddleThreeIndex(NormalType *data, int dimension, int *ii);
+
+    static void GetFirstThreeIndex(NormalType *data, int dimension, int *ii);
+
     void SampleLightingVectors(double *samples, int *indices, int sample_size);
 
     void Initialize();

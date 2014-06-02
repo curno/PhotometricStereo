@@ -96,8 +96,10 @@ bool PSModel::DetectObject()
 
     QRect rect;
     bool first = false;
-    
+    int max_count = 0;
+    std::queue<PixelIndex> object_queue;
     for (int h = 0; h < height; ++h)
+    {
         for (int w = 0; w < width; ++w)
         {
             if (flags[h][w])
@@ -105,29 +107,57 @@ bool PSModel::DetectObject()
             PixelInfo pi = ImageData.CreatePixelInfo(w, h);
             if (pi.DarkPixel())
                 continue;
-            if (!first)
+            int count = 1;
+            QRect tmp_rect(w, h, -w, -h);
+            first = true;
+            flags[h][w] = true;
+            object_queue.push(PixelIndex(w, h));
+            while (!object_queue.empty())
             {
-                first = true;
-                rect = QRect(w, h, 0, 0);
-            }
-            else
-            {
-                rect.setLeft(min(w, rect.left()));
-                rect.setRight(max(w, rect.right()));
-                rect.setBottom(max(h, rect.bottom()));
-                rect.setTop(min(h, rect.top()));
-            }
-        }
+                auto index = object_queue.front();
+                object_queue.pop();
+                tmp_rect.setLeft(min(index.X, tmp_rect.left()));
+                tmp_rect.setRight(max(index.X, tmp_rect.right()));
+                tmp_rect.setBottom(max(index.Y, tmp_rect.bottom()));
+                tmp_rect.setTop(min(index.Y, tmp_rect.top()));
+                count++;
 
-        if (first)
-        {
-            QPoint center = rect.center();
-            rect.setSize(QSize(rect.width() * 1.1, rect.height() * 1.1));
-            rect.moveCenter(center);
-            Configuration.ObjectLoadingRegion = rect;
-            return true;
+                PixelInfo pi;
+                #define CHECK_AND_PUSH(x, y) \
+                    pi = ImageData.CreatePixelInfo(x, y); \
+                    if (!pi.IsInvalid && !flags[y][x] && !pi.DarkPixel()) \
+                    { \
+                        flags[y][x] = true; \
+                        object_queue.push(pi.Index); \
+                    }
+                CHECK_AND_PUSH(index.X - 1, index.Y)
+                CHECK_AND_PUSH(index.X + 1, index.Y)
+                CHECK_AND_PUSH(index.X, index.Y - 1)
+                CHECK_AND_PUSH(index.X, index.Y + 1)
+                CHECK_AND_PUSH(index.X - 1, index.Y - 1)
+                CHECK_AND_PUSH(index.X + 1, index.Y + 1)
+                CHECK_AND_PUSH(index.X - 1, index.Y - 1)
+                CHECK_AND_PUSH(index.X + 1, index.Y + 1)
+                #undef CHECK_AND_PUSH
+
+            }
+            if (count > max_count)
+            {
+                max_count = count;
+                rect = tmp_rect;
+            }
         }
-        return false;
+    }
+
+    if (first)
+    {
+        QPoint center = rect.center();
+        rect.setSize(QSize(rect.width() * 1.1, rect.height() * 1.1));
+        rect.moveCenter(center);
+        Configuration.ObjectLoadingRegion = rect;
+        return true;
+    }
+    return false;
 }
 
 
@@ -276,7 +306,10 @@ void PSModel::CreateShadowRemovedImagesPerPixelInternal()
             }
             NormalType *data = ImageData.NormalCube->GetData(i, j);
             int idx[3];
-            GetMiddleThreeIndex(data, dimension, idx);
+            if (Configuration.UseMiddleThree)
+                GetMiddleThreeIndex(data, dimension, idx);
+            else
+                GetFirstThreeIndex(data, dimension, idx);
             for (int p = 0; p < dimension; ++p)
             {
                 if (p == idx[0] || p == idx[1] || p == idx[2])
@@ -868,10 +901,11 @@ void PSModel::SampleLightingVectors(double *samples, int *indices, int sample_si
     }
 }
 
-void PSModel::GetMiddleThreeIndex(NormalType *data, int dimension, int *ii)
+// choose the largest 3 intensity components.
+// when there is no highlight in the object's surface, 
+// choosing the largest 3 gives better results than middle 3 intensity components(below)
+void PSModel::GetFirstThreeIndex(NormalType *data, int dimension, int *ii)
 {
-
-
     ii[0] = 0;
     for (int i = 1; i < dimension; ++i)
     {
@@ -891,9 +925,13 @@ void PSModel::GetMiddleThreeIndex(NormalType *data, int dimension, int *ii)
             ii[2] = i;
         }
     }
+}
 
 
-   /* ScaleWithIndex<NormalType> *data_i = new ScaleWithIndex<NormalType>[dimension];
+void PSModel::GetMiddleThreeIndex(NormalType *data, int dimension, int *ii)
+{
+    // if has highlights, choose middle 3 intensity components.
+    ScaleWithIndex<NormalType> *data_i = new ScaleWithIndex<NormalType>[dimension];
     for (int i = 0; i < dimension; ++i)
     {
         data_i[i].v = data[i];
@@ -903,7 +941,7 @@ void PSModel::GetMiddleThreeIndex(NormalType *data, int dimension, int *ii)
     ii[0] = data_i[dimension / 2].i;
     ii[1] = data_i[dimension / 2 + 1].i;
     ii[2] = data_i[dimension / 2 + 2].i;
-    delete [] data_i;*/
+    delete [] data_i;
 
     sort(ii, ii + 3);
 
