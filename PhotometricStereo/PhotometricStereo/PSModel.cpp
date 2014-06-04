@@ -31,7 +31,7 @@ bool PSModel::HoughCircle()
     cvConvertScale(img_sum, img_sum_ava, 1.0 / c);
     cvReleaseImage(&img_sum);
     auto storage = cvCreateMemStorage(0);
-    auto *seq = cvHoughCircles(img_sum_ava, storage, CV_HOUGH_GRADIENT, 3, image->width/2.0, 100, 100, 65, 80);
+    auto *seq = cvHoughCircles(img_sum_ava, storage, CV_HOUGH_GRADIENT, 3, image->width/2.0, 200, 150, 75, 120);
     for (auto i = copy.begin(); i!= copy.end(); ++i)
         cvReleaseImage(&(*i));
 

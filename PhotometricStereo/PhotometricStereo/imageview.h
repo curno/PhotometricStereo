@@ -198,11 +198,6 @@ public:
             painter.setBrush(QBrush(Qt::green));
             painter.setPen(Qt::NoPen);
             painter.drawEllipse(owner->LocationToCheckShadow, PointSize, PointSize);
-
-            painter.setPen(QPen(QBrush(Qt::red), 2.5));
-            painter.setBrush(Qt::NoBrush);
-            painter.drawEllipse(QPoint(owner->Model->Configuration.ObjectLoadingCircle.X, owner->Model->Configuration.ObjectLoadingCircle.Y), 
-                (int)owner->Model->Configuration.ObjectLoadingCircle.Z, (int)owner->Model->Configuration.ObjectLoadingCircle.Z);
         }
         virtual void mousePressEvent(ImageView *owner, QMouseEvent *e) override;
         virtual void mouseMoveEvent(ImageView *owner, QMouseEvent *e) override;
