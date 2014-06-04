@@ -452,6 +452,24 @@ public:
         int h = qAbs(RelightingEnd.y() - RelightingStart.y());
         return QRect(x, y, w, h);
     }
+
+    void ResetUIData()
+    {
+        LastLocationToCheck = QPoint();
+        LocationResponding = QPoint();
+        LastLocationToCheck = QPoint();
+        RelightingStart = QPoint();
+        RelightingEnd = QPoint();
+        PlotCircleCenter = QPoint();
+        PlotCircleRadius = QPoint();
+        PlotTargetCircleCenter = QPoint();
+        PlotTargetCircleRadius = QPoint();
+        PlotTargetCylinder = QRect();
+        PlotTargetConeP0 = QPoint();
+        PlotTargetConeP1 = QPoint();
+        LocationToCheckShadow = QPoint();
+
+    }
 protected:
     virtual void paintEvent(QPaintEvent *event) override
     {
@@ -508,6 +526,8 @@ protected:
         Q_FOREACH (State *state, CurrentStates)
             state->mouseReleaseEvent(this, e);
     }
+
+
 private:
     static const int PointSize = 3;
 };

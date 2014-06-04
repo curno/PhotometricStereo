@@ -457,6 +457,9 @@ void MainWindow::ResetUI()
     ui.lineEditSmoothNormal->setText(QString::number(1));
     ui.comboBoxShadowDetection->setCurrentIndex(0);
     ui.comboBoxPixelDistance->setCurrentIndex(0);
+
+    ui.imageView->ResetUIData();
+    ui.imageView_ShadowRemoved->ResetUIData();
 }
 
 void MainWindow::ShowRelightingView()

@@ -324,7 +324,12 @@ public:
 
         verticalLayout->addWidget(widget2);
 
-        dockWidget_5->setWidget(dockWidgetContents_5);
+
+        auto *scroll_area = new QScrollArea(dockWidget_5);
+        scroll_area->setWidgetResizable(true);
+        scroll_area->setWidget(dockWidgetContents_5);
+        scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        dockWidget_5->setWidget(scroll_area);
         MainWindowClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_5);
         dockWidget_5->setWindowTitle("Tool Box");
         dockWidget_5->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
