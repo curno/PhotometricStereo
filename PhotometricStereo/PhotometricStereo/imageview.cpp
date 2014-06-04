@@ -5,7 +5,7 @@
 #include "depthview.h"
 
 ImageView::ImageView(QWidget *parent)
-    : QWidget(parent), Model(nullptr), UI(nullptr)
+    : QWidget(parent), Model(nullptr), UI(nullptr), Clip(false)
 {
     CurrentStates.push_back(NoneState::Instance());
 }
@@ -74,21 +74,29 @@ void ImageView::CheckNormalState::ShowMatchedPixel(ImageView * owner, QMouseEven
 
 void ImageView::CheckShadowState::mousePressEvent( ImageView *owner, QMouseEvent *e )
 {
-    owner->LocationToCheckShadow = e->pos();
-    double shadow = owner->Model->ImageData.DifferenceCube->GetData(e->y(), e->x())[owner->CurrentIndex];
-    double origin = owner->Model->ImageData.NormalCube->GetData(e->y(), e->x())[owner->CurrentIndex];
-    owner->UI->ui.ShadowLabel_->setText(QString("Origin:%0 Shadow Removed: %1").arg(QString::number(origin, 'f', 1)).arg(QString::number(shadow, 'f', 1)));
-    owner->update();
+    if (owner->PointInImage(e->pos()))
+    {
+        QPoint p = owner->UnClipPoint(e->pos());
+        owner->LocationToCheckShadow = e->pos();
+        double shadow = owner->Model->ImageData.DifferenceCube->GetData(p.y(), p.x())[owner->CurrentIndex];
+        double origin = owner->Model->ImageData.NormalCube->GetData(p.y(), p.x())[owner->CurrentIndex];
+        owner->UI->ui.ShadowLabel_->setText(QString("Origin:%0 Shadow Removed: %1").arg(QString::number(origin, 'f', 1)).arg(QString::number(shadow, 'f', 1)));
+        owner->update();
+    }
 }
 
 void ImageView::CheckShadowState::mouseMoveEvent( ImageView *owner, QMouseEvent *e )
 {
     if (e->buttons() == Qt::LeftButton)
     {
-        owner->LocationToCheckShadow = e->pos();
-        double shadow = owner->Model->ImageData.DifferenceCube->GetData(e->y(), e->x())[owner->CurrentIndex];
-        double origin = owner->Model->ImageData.NormalCube->GetData(e->y(), e->x())[owner->CurrentIndex];
-        owner->UI->ui.ShadowLabel_->setText(QString("Origin:%0 Shadow Removed: %1").arg(QString::number(origin, 'f', 1)).arg(QString::number(shadow, 'f', 1)));
-        owner->update();
+        if (owner->PointInImage(e->pos()))
+        {
+            QPoint p = owner->UnClipPoint(e->pos());
+            owner->LocationToCheckShadow = e->pos();
+            double shadow = owner->Model->ImageData.DifferenceCube->GetData(p.y(), p.x())[owner->CurrentIndex];
+            double origin = owner->Model->ImageData.NormalCube->GetData(p.y(), p.x())[owner->CurrentIndex];
+            owner->UI->ui.ShadowLabel_->setText(QString("Origin:%0 Shadow Removed: %1").arg(QString::number(origin, 'f', 1)).arg(QString::number(shadow, 'f', 1)));
+            owner->update();
+        }
     }
 }

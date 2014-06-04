@@ -426,7 +426,6 @@ void MainWindow::On_pushButtonDetectShadow_clicked()
 {
     if (Model != nullptr)
     {
-
         Model->Configuration.ShadowDetectionCircle = ui.imageView->GetPlotCircle();
         Model->Configuration.ShadowDetectionCircle.Z /= 3;
         
@@ -440,8 +439,16 @@ void MainWindow::On_pushButtonDetectShadow_clicked()
             if (shadow_set != nullptr && shadow_set->C > 0)
                 ui.imageView_ShadowRemoved->SetCurrentIndex(ui.imageView->CurrentIndex);
         }
+        if (Model->Configuration.ObjectLoadingRegion.isNull())
+            ui.imageView_ShadowRemoved->Clip = false;
+        else
+        {
+            ui.imageView_ShadowRemoved->Clip = true;
+            ui.imageView_ShadowRemoved->ClipRect = Model->Configuration.ObjectLoadingRegion;
+        }
         ui.imageView->update();
         ui.imageView_ShadowRemoved->update();
+        
     }
 }
 

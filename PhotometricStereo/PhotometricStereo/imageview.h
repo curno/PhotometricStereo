@@ -216,6 +216,9 @@ public:
             static CheckShadowState Instance_;
             return &Instance_;
         }
+
+    private:
+
     };
 
     class PlotTargetCircleState : public State
@@ -421,6 +424,10 @@ public:
     QPoint PlotTargetConeP1;
 
     QPoint LocationToCheckShadow;
+
+    // show only object loading region.
+    QRect ClipRect;
+    bool Clip;
 public:
     CircleType GetPlotCircle() const
     {
@@ -469,6 +476,22 @@ public:
         PlotTargetConeP1 = QPoint();
         LocationToCheckShadow = QPoint();
 
+        ClipRect = QRect();
+        Clip = false;
+    }
+
+    QPoint UnClipPoint(const QPoint &point)
+    {
+        if (!Clip)
+            return point;
+        else
+            return QPoint(point.x() + ClipRect.x(), point.y() + ClipRect.y());
+    }
+
+    bool PointInImage(const QPoint &point)
+    {
+        QPoint p = UnClipPoint(point);
+        return QRect(0, 0, Model->ImageData.NormalCube->M, Model->ImageData.NormalCube->N).contains(point);
     }
 protected:
     virtual void paintEvent(QPaintEvent *event) override
@@ -481,7 +504,12 @@ protected:
         painter.setRenderHints(QPainter::Antialiasing);
         QImage *image = Model->GetImage(CurrentGroup, CurrentIndex);
         if (image != nullptr)
-            painter.drawImage(0, 0, *image);
+        {
+            if (!Clip)
+                painter.drawImage(0, 0, *image);
+            else
+                painter.drawImage(QPoint(0, 0), *image, ClipRect);
+        }
 
         if (image != nullptr)
         {
