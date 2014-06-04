@@ -966,6 +966,7 @@ void PSModel::CalcLinearCombination()
 
 void PSModel::CreateShadowRemovedImages()
 {
+    Ugly();
     WeightsCache_.clear();
     if (Configuration.ShadowDetection == ModelConfiguration::ShadowDetectionMethod::PerPixel_Method)
         CreateShadowRemovedImagesPerPixel();
@@ -1025,6 +1026,7 @@ void PSModel::LoadObjectPixelNormals()
 
     QTime time;
     time.start();
+    Ugly();
     LoadBallPixels();
 
     Progress.Current = 0;
@@ -1057,7 +1059,6 @@ PSModel * PSModel::CreateModel(const string &dir)
     retval->Configuration.ImageSetSource = dir;
     retval->ImageData.NormalCube = ImageDataCubeFactory::CreateNormalCubeFromFiles(dir);
     retval->Configuration.ImageCount = retval->ImageData.NormalCube->GetC();
-    retval->Configuration.UseMiddleThree = Ugly(dir);
     return retval;
 }
 

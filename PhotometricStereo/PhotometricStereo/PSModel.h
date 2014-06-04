@@ -364,15 +364,27 @@ private:
     unordered_map<WeightToken, vec3, WeightTokenHasher> WeightsCache_;
 
 
-    static bool Ugly(const string &dir_name)
+    void Ugly()
     {
-        QDir dir(FromStdStringToQString(dir_name));
+       if (UglyNeed())
+       {
+           Configuration.UseMiddleThree = true;
+           int value = Configuration.ShadowThreshold;
+           if (value >= 20 && value <= 80)
+               value = static_cast<int>(80 + 10 * (value - 20) / 70.0);
+           Configuration.ShadowThreshold = value;
+           Configuration.ShadowDetectionCircle.Z /= 3;
+       }
+    }
+
+    bool UglyNeed()
+    {
+        QDir dir(FromStdStringToQString(Configuration.ImageSetSource));
         QFileInfoList list = dir.entryInfoList();
         foreach (QFileInfo info, list)
             if (info.completeBaseName().endsWith("H"))
                 return true;
         return false;
-
     }
 };
 
